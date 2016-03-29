@@ -19,4 +19,4 @@ Roadmap :
 * Instruction implementation : In progress
 * Shared library : Todo
 * Clock synchronization : Todo
-* GUI for debbuging like memory dump, cpu state, breakpoint, ... : Todo
+* Debbuging tools like memory dump, cpu state, breakpoint, ... : Todo

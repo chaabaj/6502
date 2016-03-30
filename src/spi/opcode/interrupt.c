@@ -22,12 +22,21 @@
  * SOFTWARE.
  */
 
-#ifndef SPI_OPCODE_ADC_H
-# define SPI_OPCODE_ADC_H
+#include "spi/opcode/interrupt.h"
+#include "spi/cpu/convert.h"
 
-# include "spi/cpu/cpu_6502.h"
+void    spi_brk(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_mem_addr_t brk_addr = SPI_TO_UINT16(mem[0xFFFF], mem[0xFFFE]);
 
-void    spi_adc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
-void    spi_register_adc_opcode(spi_cpu_t *cpu);
+    mem[cpu->sp] = (spi_byte_t)(cpu->pc >> 8);
+    mem[cpu->sp - 1] = (spi_byte_t)(cpu->pc & 0x00FF);
+    mem[cpu->sp - 2] = (spi_byte_t )(cpu->flags | 0x10);
+    cpu->sp -= 3;
+    cpu->pc = brk_addr;
+}
 
-#endif //SPI_OPCODE_ADC_H
+SPI_INSTRUCTION_ALIAS(spi_brk, IMPLIED, 1, 7);
+
+void    spi_register_interrupt_opcodes(spi_cpu_t *cpu) {
+    cpu->opcode_table[0x00] = &SPI_GET_INSTRUCTION_ALIAS(spi_brk, IMPLIED);
+}

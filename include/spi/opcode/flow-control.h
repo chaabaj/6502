@@ -22,13 +22,28 @@
  * SOFTWARE.
  */
 
-#ifndef SPI_OPCODE_BCC_H
-# define SPI_OPCODE_BCC_H
+#ifndef SPI_OPCODE_FLOW_CONTROL_H
+# define SPI_OPCODE_FLOW_CONTROL_H
 
 # include "spi/cpu/cpu_6502.h"
 
+# define SPI_OPCODE_CONDITIONAL_BRANCH(name, condition) \
+    void name(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {   \
+        int8_t  rel_addr = spi_cpu_read_value(cpu, mode, mem);              \
+                                                                            \
+        if (condition) {                                                    \
+            cpu->pc += rel_addr;                                            \
+        }                                                                   \
+    }
+
+void    spi_bcs(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 void    spi_bcc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
-void    spi_register_bcc_opcode(spi_cpu_t *cpu);
+void    spi_beq(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void    spi_bmi(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void    spi_bne(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void    spi_bpl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void    spi_bvc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void    spi_bvs(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void    spi_register_flow_control_opcodes(spi_cpu_t *cpu);
 
-
-#endif //SPI_OPCODE_BCC_H
+#endif //SPI_OPCODE_FLOW_CONTROL_H

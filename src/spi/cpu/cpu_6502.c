@@ -80,7 +80,7 @@ void    spi_cpu_reset(spi_cpu_t *cpu, spi_byte_t *mem, const spi_program_config_
     PRINT_DEBUG("RESET CPU", "");
     cpu->pc = SPI_TO_UINT16(mem[cfg->reset_vector_offset + 1], mem[cfg->reset_vector_offset]);
     printf("PC iIS INITIALIZED AT : %X\n", cpu->pc);
-    cpu->sp = 0xFF;
+    cpu->sp = 0x1FF;
     SPI_ENABLE_FLAGS(cpu->flags, BLOCK_INTERRUPTS);
 }
 

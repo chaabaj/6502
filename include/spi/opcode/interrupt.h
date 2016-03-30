@@ -22,12 +22,12 @@
  * SOFTWARE.
  */
 
-#ifndef SPI_OPCODE_BCS_H
-# define SPI_OPCODE_BCS_H
+#ifndef SPI_OPCODE_INTERRUPT_H
+# define SPI_OPCODE_INTERRUPT_H
 
 # include "spi/cpu/cpu_6502.h"
 
-void    spi_bcs(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
-void    spi_register_bcs_opcode(spi_cpu_t *cpu);
+void    spi_brk(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void    spi_register_interrupt_opcodes(spi_cpu_t *cpu);
 
-#endif //SPI_OPCODE_BCS_H
+#endif //SPI_OPCODE_INTERRUPT_H

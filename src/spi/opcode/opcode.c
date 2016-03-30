@@ -25,9 +25,7 @@
 # include "spi/opcode/opcode.h"
 
 void    spi_register_opcodes(spi_cpu_t *cpu) {
-    spi_register_adc_opcode(cpu);
-    spi_register_and_opcode(cpu);
-    spi_register_asl_opcode(cpu);
-    spi_register_bcc_opcode(cpu);
-    spi_register_bcs_opcode(cpu);
+    spi_register_arithmetic_opcodes(cpu);
+    spi_register_flow_control_opcodes(cpu);
+    spi_register_interrupt_opcodes(cpu);
 }

@@ -22,12 +22,14 @@
  * SOFTWARE.
  */
 
-#ifndef SPI_OPCODE_AND_H
-# define SPI_OPCODE_AND_H
+#ifndef SPI_OPCODE_ARITHMETIC_H
+# define SPI_OPCODE_ARITHMETIC_H
 
 # include "spi/cpu/cpu_6502.h"
 
+void    spi_adc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 void    spi_and(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *memory);
-void    spi_register_and_opcode(spi_cpu_t *cpu);
+void    spi_asl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void    spi_register_arithmetic_opcodes(spi_cpu_t *cpu);
 
-#endif //SPI_OPCODE_AND_H
+#endif //SPI_OPCODE_ARITHMETIC_H

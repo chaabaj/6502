@@ -25,11 +25,9 @@
 #ifndef SPI_OPCODE_OPCODE_H
 # define SPI_OPCODE_OPCODE_H
 
-# include "spi/opcode/adc.h"
-# include "spi/opcode/and.h"
-# include "spi/opcode/asl.h"
-# include "spi/opcode/bcc.h"
-# include "spi/opcode/bcs.h"
+# include "spi/opcode/arithmetic.h"
+# include "spi/opcode/flow-control.h"
+# include "spi/opcode/interrupt.h"
 
 void    spi_register_opcodes(spi_cpu_t *cpu);
 

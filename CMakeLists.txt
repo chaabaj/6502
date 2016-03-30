@@ -6,7 +6,7 @@ file(GLOB_RECURSE SRCS "src/*.c")
 file(GLOB_RECURSE HEADERS "include/*.h")
 
 if (UNIX OR APPLE)
-    set(CMAKE_C_FLAGS "-O3 -Wall")
+    set(CMAKE_C_FLAGS "-ggdb -Wall")
 endif()
 
 include_directories(include)

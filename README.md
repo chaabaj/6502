@@ -15,8 +15,8 @@ It's also beginning step for other emulator i want to write that are based in 65
 The 6502 cpu emulator will be purpose as a shared library for reuse purpose in other emulator
 
 Roadmap :
-Initialization and loading : In progress
-Instruction implementation : In progress
-Shared library : Todo
-Clock synchronization : Todo
-GUI for debbuging like memory dump, cpu state, breakpoint, ... : Todo
+* Initialization and loading : In progress
+* Instruction implementation : In progress
+* Shared library : Todo
+* Clock synchronization : Todo
+* Debbuging tools like memory dump, cpu state, breakpoint, ... : Todo

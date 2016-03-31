@@ -42,6 +42,51 @@ void spi_clv(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
 
 void spi_nop(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {}
 
+void spi_sec(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    SPI_ENABLE_FLAG(cpu->flags, CARRY);
+}
+
+void spi_sed(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    SPI_ENABLE_FLAG(cpu->flags, DECIMAL);
+}
+
+void spi_sei(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    SPI_ENABLE_FLAG(cpu->flags, DISABLE_INTERRUPTS);
+}
+
+void spi_tax(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    cpu->registers[X] = cpu->registers[A];
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(cpu->registers[X], 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[X] == 0);
+}
+
+void spi_tay(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    cpu->registers[Y] = cpu->registers[A];
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(cpu->registers[Y], 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[Y] == 0);
+}
+
+void spi_tsx(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    cpu->registers[X] = cpu->sp;
+}
+
+void spi_txa(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    cpu->registers[A] = cpu->registers[X];
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(cpu->registers[A], 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[A] == 0);
+}
+
+void spi_txs(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    cpu->sp = cpu->registers[X];
+}
+
+void spi_tya(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    cpu->registers[A] = cpu->registers[Y];
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(cpu->registers[A], 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[A] == 0);
+}
+
+
 SPI_INSTRUCTION_ALIAS(spi_clc, IMPLIED, 1, 2);
 
 SPI_INSTRUCTION_ALIAS(spi_cld, IMPLIED, 1, 2);
@@ -51,6 +96,24 @@ SPI_INSTRUCTION_ALIAS(spi_cli, IMPLIED, 1, 2);
 SPI_INSTRUCTION_ALIAS(spi_clv, IMPLIED, 1, 2);
 
 SPI_INSTRUCTION_ALIAS(spi_nop, IMPLIED, 1, 2);
+
+SPI_INSTRUCTION_ALIAS(spi_sec, IMPLIED, 1, 2);
+
+SPI_INSTRUCTION_ALIAS(spi_sed, IMPLIED, 1, 2);
+
+SPI_INSTRUCTION_ALIAS(spi_sei, IMPLIED, 1, 2);
+
+SPI_INSTRUCTION_ALIAS(spi_tax, IMPLIED, 1, 2);
+
+SPI_INSTRUCTION_ALIAS(spi_tay, IMPLIED, 1, 2);
+
+SPI_INSTRUCTION_ALIAS(spi_tsx, IMPLIED, 1, 2);
+
+SPI_INSTRUCTION_ALIAS(spi_txa, IMPLIED, 1, 2);
+
+SPI_INSTRUCTION_ALIAS(spi_txs, IMPLIED, 1, 2);
+
+SPI_INSTRUCTION_ALIAS(spi_tya, IMPLIED, 1, 2);
 
 void spi_register_cpu_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0x18] = &SPI_GET_INSTRUCTION_ALIAS(spi_clc, IMPLIED);
@@ -62,5 +125,22 @@ void spi_register_cpu_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0xB8] = &SPI_GET_INSTRUCTION_ALIAS(spi_clv, IMPLIED);
 
     cpu->opcode_table[0xEA] = &SPI_GET_INSTRUCTION_ALIAS(spi_nop, IMPLIED);
-}
 
+    cpu->opcode_table[0x38] = &SPI_GET_INSTRUCTION_ALIAS(spi_sec, IMPLIED);
+
+    cpu->opcode_table[0xF8] = &SPI_GET_INSTRUCTION_ALIAS(spi_sed, IMPLIED);
+
+    cpu->opcode_table[0x78] = &SPI_GET_INSTRUCTION_ALIAS(spi_sei, IMPLIED);
+
+    cpu->opcode_table[0xAA] = &SPI_GET_INSTRUCTION_ALIAS(spi_tax, IMPLIED);
+
+    cpu->opcode_table[0xA8] = &SPI_GET_INSTRUCTION_ALIAS(spi_tay, IMPLIED);
+
+    cpu->opcode_table[0xBA] = &SPI_GET_INSTRUCTION_ALIAS(spi_tsx, IMPLIED);
+
+    cpu->opcode_table[0x8A] = &SPI_GET_INSTRUCTION_ALIAS(spi_txa, IMPLIED);
+
+    cpu->opcode_table[0x9A] = &SPI_GET_INSTRUCTION_ALIAS(spi_txs, IMPLIED);
+
+    cpu->opcode_table[0x98] = &SPI_GET_INSTRUCTION_ALIAS(spi_tya, IMPLIED);
+}

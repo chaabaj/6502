@@ -25,25 +25,21 @@
 #include "spi/opcode/stack.h"
 
 void spi_pha(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    mem[cpu->sp] = cpu->registers[A];
-    cpu->sp--;
+    spi_cpu_push_stack(cpu, mem, cpu->registers[X]);
 }
 
 void spi_php(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    mem[cpu->sp] = cpu->flags;
-    cpu->sp--;
+    spi_cpu_push_stack(cpu, mem, cpu->flags);
 }
 
 void spi_pla(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    cpu->sp++;
-    cpu->registers[A] = mem[cpu->sp];
+    cpu->registers[A] = spi_cpu_pull_stack(cpu, mem);
     SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(cpu->registers[A], 7));
     SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[A] == 0);
 }
 
 void spi_plp(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    cpu->sp++;
-    cpu->flags = mem[cpu->sp];
+    cpu->flags = spi_cpu_pull_stack(cpu, mem);
 }
 
 SPI_INSTRUCTION_ALIAS(spi_pha, IMPLIED, 1, 3);

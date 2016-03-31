@@ -23,6 +23,7 @@
  */
 
 #include "spi/opcode/flow-control.h"
+#include "spi/cpu/convert.h"
 
 SPI_OPCODE_CONDITIONAL_BRANCH(spi_bcc, SPI_GET_FLAG(cpu->flags, CARRY) == 0);
 SPI_OPCODE_CONDITIONAL_BRANCH(spi_bcs, SPI_GET_FLAG(cpu->flags, CARRY) == 1);
@@ -38,28 +39,78 @@ void    spi_jmp(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
 }
 
 void    spi_jsr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    mem[cpu->sp] = (spi_byte_t)(cpu->pc >> 8);
-    mem[cpu->sp - 1] = (spi_byte_t)(cpu->pc & 0x00FF);
-    cpu->sp -= 2;
+    spi_cpu_push_stack(cpu, mem, (spi_byte_t )(cpu->pc >> 8));
+    spi_cpu_push_stack(cpu, mem, (spi_byte_t)(cpu->pc &0x00FF));
     cpu->pc = spi_cpu_get_addr(cpu, mode, mem);
 }
 
+void spi_rti(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_byte_t h_addr;
+    spi_byte_t l_addr;
+
+    cpu->flags = spi_cpu_pull_stack(cpu, mem);
+    l_addr = spi_cpu_pull_stack(cpu, mem);
+    h_addr = spi_cpu_pull_stack(cpu, mem);
+    cpu->pc = SPI_TO_UINT16(h_addr, l_addr);
+}
+
+void spi_rts(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_byte_t h_addr;
+    spi_byte_t l_addr;
+
+    l_addr = spi_cpu_pull_stack(cpu, mem);
+    h_addr = spi_cpu_pull_stack(cpu, mem);
+    cpu->pc = (spi_mem_addr_t )(SPI_TO_UINT16(l_addr, h_addr) + 1);
+}
+
 SPI_INSTRUCTION_ALIAS(spi_bcc, RELATIVE, 2, 2);
+
 SPI_INSTRUCTION_ALIAS(spi_bcs, RELATIVE, 2, 2);
+
 SPI_INSTRUCTION_ALIAS(spi_beq, RELATIVE, 2, 2);
+
 SPI_INSTRUCTION_ALIAS(spi_bmi, RELATIVE, 2, 2);
+
 SPI_INSTRUCTION_ALIAS(spi_bne, RELATIVE, 2, 2);
+
 SPI_INSTRUCTION_ALIAS(spi_bpl, RELATIVE, 2, 2);
+
 SPI_INSTRUCTION_ALIAS(spi_bvc, RELATIVE, 2, 2);
+
 SPI_INSTRUCTION_ALIAS(spi_bvs, RELATIVE, 2, 2);
+
+SPI_INSTRUCTION_ALIAS(spi_jmp, ABSOLUTE, 3, 3);
+SPI_INSTRUCTION_ALIAS(spi_jmp, INDIRECT, 3, 5);
+
+SPI_INSTRUCTION_ALIAS(spi_jsr, ABSOLUTE, 3, 6);
+
+SPI_INSTRUCTION_ALIAS(spi_rti, IMPLIED, 1, 6);
+
+SPI_INSTRUCTION_ALIAS(spi_rts, IMPLIED, 1, 6);
 
 void    spi_register_flow_control_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0x90] = &SPI_GET_INSTRUCTION_ALIAS(spi_bcc, RELATIVE);
+
     cpu->opcode_table[0xF0] = &SPI_GET_INSTRUCTION_ALIAS(spi_bcs, RELATIVE);
+
     cpu->opcode_table[0xB0] = &SPI_GET_INSTRUCTION_ALIAS(spi_beq, RELATIVE);
+
     cpu->opcode_table[0x30] = &SPI_GET_INSTRUCTION_ALIAS(spi_bmi, RELATIVE);
+
     cpu->opcode_table[0xD0] = &SPI_GET_INSTRUCTION_ALIAS(spi_bne, RELATIVE);
+
     cpu->opcode_table[0x10] = &SPI_GET_INSTRUCTION_ALIAS(spi_bpl, RELATIVE);
+
     cpu->opcode_table[0x50] = &SPI_GET_INSTRUCTION_ALIAS(spi_bvc, RELATIVE);
+
     cpu->opcode_table[0x70] = &SPI_GET_INSTRUCTION_ALIAS(spi_bvs, RELATIVE);
+
+    cpu->opcode_table[0x4C] = &SPI_GET_INSTRUCTION_ALIAS(spi_jmp, ABSOLUTE);
+    cpu->opcode_table[0x6C] = &SPI_GET_INSTRUCTION_ALIAS(spi_jmp, INDIRECT);
+
+    cpu->opcode_table[0x20] = &SPI_GET_INSTRUCTION_ALIAS(spi_jsr, ABSOLUTE);
+
+    cpu->opcode_table[0x40] = &SPI_GET_INSTRUCTION_ALIAS(spi_rti, IMPLIED);
+
+    cpu->opcode_table[0x60] = &SPI_GET_INSTRUCTION_ALIAS(spi_rts, IMPLIED);
 }

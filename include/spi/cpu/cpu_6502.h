@@ -116,13 +116,14 @@ enum spi_cpu_status_flags_e {
 typedef enum spi_cpu_status_flags_e spi_cpu_status_flags_t;
 
 struct spi_cpu_s {
-    spi_byte_t  registers[SPI_NB_REGISTER];
-    spi_byte_t  flags;
-    uint16_t    pc;
-    uint16_t    sp;
-    uint32_t    available_cycles;
-    uint32_t    total_cycles;
-    int32_t	    (*opcode_table[SPI_NB_OPCODE])(struct spi_cpu_s *cpu, spi_byte_t *mem);
+    spi_byte_t          registers[SPI_NB_REGISTER];
+    spi_byte_t          flags;
+    spi_mem_addr_t      pc;
+    uint8_t             sp;
+    spi_mem_addr_t      stack_addr;
+    uint32_t            available_cycles;
+    uint32_t            total_cycles;
+    int32_t	            (*opcode_table[SPI_NB_OPCODE])(struct spi_cpu_s *cpu, spi_byte_t *mem);
 };
 
 typedef struct spi_cpu_s spi_cpu_t;
@@ -131,7 +132,7 @@ typedef struct spi_cpu_s spi_cpu_t;
  * Initialize the cpu
  * reset registers and set the processor speed
  */
-void            spi_cpu_init(spi_cpu_t *cpu, double speed, spi_clock_speed_unit_t unit);
+void spi_cpu_init(spi_cpu_t *cpu, double speed, spi_clock_speed_unit_t unit);
 
 /*
  * Reset the cpu
@@ -139,17 +140,16 @@ void            spi_cpu_init(spi_cpu_t *cpu, double speed, spi_clock_speed_unit_
  * 6502 processor read the reset vector table in memory to know where the program start
  * The reset vector table is located at 0xFFFD and 0xFFFC
  */
-void            spi_cpu_reset(spi_cpu_t *cpu, spi_byte_t *byte, const spi_program_config_t *cfg);
+void spi_cpu_reset(spi_cpu_t *cpu, spi_byte_t *byte, const spi_program_config_t *cfg);
 
 /**
  * Execute the next opcode
  */
-void            spi_cpu_execute(spi_cpu_t *cpu, spi_byte_t *mem);
+void spi_cpu_execute(spi_cpu_t *cpu, spi_byte_t *mem);
 
 /**
  * Get memory address using addressing mode
  */
-
 spi_mem_addr_t  spi_cpu_get_addr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
 /*
@@ -157,13 +157,17 @@ spi_mem_addr_t  spi_cpu_get_addr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_by
  * The addressing mode tell how to calculate the address
  * Please read 6502 addressing mode for more information
  */
-spi_byte_t      spi_cpu_read_value(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+spi_byte_t spi_cpu_read_value(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
 /*
  * Write value to memory
  * The addressing mode tell how to calculate the address
  * Please read 6502 addressing mode for more information
  */
-void            spi_cpu_write_value(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem, spi_byte_t value);
+void spi_cpu_write_value(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem, spi_byte_t value);
+
+void spi_cpu_push_stack(spi_cpu_t *cpu, spi_byte_t *mem, spi_byte_t value);
+
+spi_byte_t spi_cpu_pull_stack(spi_cpu_t *cpu, spi_byte_t *mem);
 
 #endif //SPI_CPU_6502_H

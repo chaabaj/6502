@@ -42,6 +42,18 @@ void spi_ldy(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[A] == 0);
 }
 
+void spi_sta(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_cpu_write_value(cpu, mode, mem, cpu->registers[A]);
+}
+
+void spi_stx(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_cpu_write_value(cpu, mode, mem, cpu->registers[X]);
+}
+
+void spi_sty(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_cpu_write_value(cpu, mode, mem, cpu->registers[Y]);
+}
+
 SPI_INSTRUCTION_ALIAS(spi_lda, IMMEDIATE, 2, 2);
 SPI_INSTRUCTION_ALIAS(spi_lda, ZERO_PAGE, 2, 3);
 SPI_INSTRUCTION_ALIAS(spi_lda, ZERO_PAGE_INDEXED_X, 2, 4);
@@ -62,6 +74,22 @@ SPI_INSTRUCTION_ALIAS(spi_ldy, ZERO_PAGE, 2, 3);
 SPI_INSTRUCTION_ALIAS(spi_ldy, ZERO_PAGE_INDEXED_X, 2, 4);
 SPI_INSTRUCTION_ALIAS(spi_ldy, ABSOLUTE, 3, 4);
 SPI_INSTRUCTION_ALIAS(spi_ldy, ABSOLUTE_INDEXED_X, 3, 4);
+
+SPI_INSTRUCTION_ALIAS(spi_sta, ZERO_PAGE,2, 3);
+SPI_INSTRUCTION_ALIAS(spi_sta, ZERO_PAGE_INDEXED_X, 2, 4);
+SPI_INSTRUCTION_ALIAS(spi_sta, ABSOLUTE, 3, 4);
+SPI_INSTRUCTION_ALIAS(spi_sta, ABSOLUTE_INDEXED_X, 3, 5);
+SPI_INSTRUCTION_ALIAS(spi_sta, ABSOLUTE_INDEXED_Y, 3, 5);
+SPI_INSTRUCTION_ALIAS(spi_sta, INDEXED_INDIRECT, 2, 6);
+SPI_INSTRUCTION_ALIAS(spi_sta, INDIRECT_INDEXED, 2, 6);
+
+SPI_INSTRUCTION_ALIAS(spi_stx, ZERO_PAGE, 2, 3);
+SPI_INSTRUCTION_ALIAS(spi_stx, ZERO_PAGE_INDEXED_Y, 2, 4);
+SPI_INSTRUCTION_ALIAS(spi_stx, ABSOLUTE, 3, 4);
+
+SPI_INSTRUCTION_ALIAS(spi_sty, ZERO_PAGE, 2, 3);
+SPI_INSTRUCTION_ALIAS(spi_sty, ZERO_PAGE_INDEXED_X, 2, 4);
+SPI_INSTRUCTION_ALIAS(spi_sty, ABSOLUTE, 3, 4);
 
 void spi_register_memory_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0xA9] = &SPI_GET_INSTRUCTION_ALIAS(spi_lda, IMMEDIATE);
@@ -84,4 +112,20 @@ void spi_register_memory_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0xB4] = &SPI_GET_INSTRUCTION_ALIAS(spi_ldy, ZERO_PAGE_INDEXED_X);
     cpu->opcode_table[0xAC] = &SPI_GET_INSTRUCTION_ALIAS(spi_ldy, ABSOLUTE);
     cpu->opcode_table[0xBC] = &SPI_GET_INSTRUCTION_ALIAS(spi_ldy, ABSOLUTE_INDEXED_X);
+
+    cpu->opcode_table[0x85] = &SPI_GET_INSTRUCTION_ALIAS(spi_sta, ZERO_PAGE);
+    cpu->opcode_table[0x96] = &SPI_GET_INSTRUCTION_ALIAS(spi_sta, ZERO_PAGE_INDEXED_X);
+    cpu->opcode_table[0x8D] = &SPI_GET_INSTRUCTION_ALIAS(spi_sta, ABSOLUTE);
+    cpu->opcode_table[0x9D] = &SPI_GET_INSTRUCTION_ALIAS(spi_sta, ABSOLUTE_INDEXED_X);
+    cpu->opcode_table[0x99] = &SPI_GET_INSTRUCTION_ALIAS(spi_sta, ABSOLUTE_INDEXED_Y);
+    cpu->opcode_table[0x81] = &SPI_GET_INSTRUCTION_ALIAS(spi_sta, INDEXED_INDIRECT);
+    cpu->opcode_table[0x91] = &SPI_GET_INSTRUCTION_ALIAS(spi_sta, INDIRECT_INDEXED);
+
+    cpu->opcode_table[0x86] = &SPI_GET_INSTRUCTION_ALIAS(spi_stx, ZERO_PAGE);
+    cpu->opcode_table[0x96] = &SPI_GET_INSTRUCTION_ALIAS(spi_stx, ZERO_PAGE_INDEXED_Y);
+    cpu->opcode_table[0x8E] = &SPI_GET_INSTRUCTION_ALIAS(spi_stx, ABSOLUTE);
+
+    cpu->opcode_table[0x84] = &SPI_GET_INSTRUCTION_ALIAS(spi_sty, ZERO_PAGE);
+    cpu->opcode_table[0x94] = &SPI_GET_INSTRUCTION_ALIAS(spi_sty, ZERO_PAGE_INDEXED_X);
+    cpu->opcode_table[0x8C] = &SPI_GET_INSTRUCTION_ALIAS(spi_sty, ABSOLUTE);
 }

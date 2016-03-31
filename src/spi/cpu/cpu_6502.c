@@ -98,3 +98,15 @@ void    spi_cpu_execute(spi_cpu_t *cpu, spi_byte_t *mem) {
         cpu->opcode_table[opcode](cpu, mem);
     }
 }
+
+
+void spi_cpu_push_stack(spi_cpu_t *cpu, spi_byte_t *mem, spi_byte_t value) {
+    mem[cpu->stack_addr + cpu->sp] = value;
+    cpu->sp--;
+}
+
+spi_byte_t spi_cpu_pull_stack(spi_cpu_t *cpu, spi_byte_t *mem) {
+    cpu->sp++;
+
+    return mem[cpu->stack_addr + cpu->sp];
+}

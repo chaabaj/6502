@@ -27,54 +27,24 @@
 
 void    spi_adc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     spi_byte_t byte = spi_cpu_read_value(cpu, mode, mem);
-    int result = cpu->registers[A] + byte + cpu->registers[A] + SPI_GET_FLAGS(cpu->flags, CARRY);
+    int result = cpu->registers[A] + byte + SPI_GET_FLAG(cpu->flags, CARRY);
 
     PRINT_DEBUG("VALUE : %d", byte);
-    SPI_ENABLE_FLAGS_IF(cpu->flags, OVERFLOW, result > 255)
-    SPI_ENABLE_FLAGS_IF(cpu->flags, NEGATIVE, (int8_t)(result) < 0)
-    SPI_ENABLE_FLAGS_IF(cpu->flags, ZERO, result == 0)
-    if (SPI_GET_FLAGS(cpu->flags, ENABLE_BCD)) {
-        result = SPI_BCD(cpu->registers[A]) + SPI_BCD(byte) + SPI_GET_FLAGS(cpu->flags, CARRY);
-        SPI_ENABLE_FLAGS_IF(cpu->flags, CARRY, result > 99)
+    SPI_ENABLE_FLAG_IF(cpu->flags, OVERFLOW, result > 255)
+    SPI_ENABLE_FLAG_IF(cpu->flags, NEGATIVE, (int8_t)(result) < 0)
+    SPI_ENABLE_FLAG_IF(cpu->flags, ZERO, result == 0)
+    if (SPI_GET_FLAG(cpu->flags, DECIMAL)) {
+        result = SPI_BCD(cpu->registers[A]) + SPI_BCD(byte) + SPI_GET_FLAG(cpu->flags, CARRY);
+        SPI_ENABLE_FLAG_IF(cpu->flags, CARRY, result > 99)
     } else {
-        SPI_ENABLE_FLAGS_IF(cpu->flags, CARRY, result > 255)
+        SPI_ENABLE_FLAG_IF(cpu->flags, CARRY, result > 255)
     }
     cpu->registers[A] = (spi_byte_t)result;
     PRINT_DEBUG("PROCESSOR STATUS : %X", cpu->flags);
     PRINT_DEBUG("ACCUMULATOR VALUE : %d", (spi_byte_t)result);
 }
 
-SPI_INSTRUCTION_ALIAS(spi_adc, IMMEDIATE, 2, 2);
-SPI_INSTRUCTION_ALIAS(spi_adc, ZERO_PAGE, 2, 3);
-SPI_INSTRUCTION_ALIAS(spi_adc, ZERO_PAGE_INDEXED_X, 2, 4);
-SPI_INSTRUCTION_ALIAS(spi_adc, ABSOLUTE, 3, 4);
-SPI_INSTRUCTION_ALIAS(spi_adc, ABSOLUTE_INDEXED_X, 3, 4);
-SPI_INSTRUCTION_ALIAS(spi_adc, ABSOLUTE_INDEXED_Y, 3, 4);
-SPI_INSTRUCTION_ALIAS(spi_adc, INDEXED_INDIRECT, 2, 6);
-SPI_INSTRUCTION_ALIAS(spi_adc, INDIRECT_INDEXED, 2, 5);
-
-void    spi_and(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    spi_byte_t byte = spi_cpu_read_value(cpu, mode, mem);
-    spi_byte_t result = cpu->registers[A] & byte;
-
-    PRINT_DEBUG("VALUE : %d", byte);
-    SPI_ENABLE_FLAGS_IF(cpu->flags, NEGATIVE, (int8_t)(result) < 0)
-    SPI_ENABLE_FLAGS_IF(cpu->flags, ZERO, result == 0)
-    cpu->registers[A] = (spi_byte_t)result;
-    PRINT_DEBUG("PROCESSOR STATUS : %X", cpu->flags);
-    PRINT_DEBUG("ACCUMULATOR VALUE : %d", (spi_byte_t)result);
-}
-
-SPI_INSTRUCTION_ALIAS(spi_and, IMMEDIATE, 2, 2);
-SPI_INSTRUCTION_ALIAS(spi_and, ZERO_PAGE, 2, 2);
-SPI_INSTRUCTION_ALIAS(spi_and, ZERO_PAGE_INDEXED_X, 2, 3);
-SPI_INSTRUCTION_ALIAS(spi_and, ABSOLUTE, 3, 4);
-SPI_INSTRUCTION_ALIAS(spi_and, ABSOLUTE_INDEXED_X, 3, 4);
-SPI_INSTRUCTION_ALIAS(spi_and, ABSOLUTE_INDEXED_Y, 3, 4);
-SPI_INSTRUCTION_ALIAS(spi_and, INDEXED_INDIRECT, 2, 6);
-SPI_INSTRUCTION_ALIAS(spi_and, INDIRECT_INDEXED, 2, 5);
-
-void    spi_asl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+void spi_asl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     spi_byte_t value;
 
     if (mode == ACCUMULATOR) {
@@ -88,24 +58,77 @@ void    spi_asl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     SPI_SET_FLAGS(cpu->flags, ZERO, value == 0 ? 1 : 0);
 }
 
+void spi_dec(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_mem_addr_t addr = spi_cpu_get_addr(cpu, mode, mem);
+
+    mem[addr] = (spi_byte_t)(mem[addr] - 1);
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(mem[addr], 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, mem[addr] == 0);
+}
+
+void spi_dex(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    cpu->registers[X]--;
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(cpu->registers[X], 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[X] == 0);
+}
+
+void spi_dey(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    cpu->registers[Y]--;
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(cpu->registers[Y], 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[Y] == 0);
+}
+
+void spi_inc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_mem_addr_t addr = spi_cpu_get_addr(cpu, mode, mem);
+
+    mem[addr] = (spi_byte_t)(mem[addr] + 1);
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(mem[addr], 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, mem[addr] == 0);
+}
+
+void spi_inx(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    cpu->registers[X]++;
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(cpu->registers[X], 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[X] == 0);
+}
+
+void spi_iny(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    cpu->registers[Y]++;
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(cpu->registers[X], 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[X] == 0);
+}
+
+SPI_INSTRUCTION_ALIAS(spi_adc, IMMEDIATE, 2, 2);
+SPI_INSTRUCTION_ALIAS(spi_adc, ZERO_PAGE, 2, 3);
+SPI_INSTRUCTION_ALIAS(spi_adc, ZERO_PAGE_INDEXED_X, 2, 4);
+SPI_INSTRUCTION_ALIAS(spi_adc, ABSOLUTE, 3, 4);
+SPI_INSTRUCTION_ALIAS(spi_adc, ABSOLUTE_INDEXED_X, 3, 4);
+SPI_INSTRUCTION_ALIAS(spi_adc, ABSOLUTE_INDEXED_Y, 3, 4);
+SPI_INSTRUCTION_ALIAS(spi_adc, INDEXED_INDIRECT, 2, 6);
+SPI_INSTRUCTION_ALIAS(spi_adc, INDIRECT_INDEXED, 2, 5);
+
 SPI_INSTRUCTION_ALIAS(spi_asl, ACCUMULATOR, 1, 2);
 SPI_INSTRUCTION_ALIAS(spi_asl, ZERO_PAGE, 2, 5);
 SPI_INSTRUCTION_ALIAS(spi_asl, ZERO_PAGE_INDEXED_X, 2, 6);
 SPI_INSTRUCTION_ALIAS(spi_asl, ABSOLUTE, 3, 6);
 SPI_INSTRUCTION_ALIAS(spi_asl, ABSOLUTE_INDEXED_X, 3, 7);
 
+SPI_INSTRUCTION_ALIAS(spi_dec, ZERO_PAGE, 2, 5);
+SPI_INSTRUCTION_ALIAS(spi_dec, ZERO_PAGE_INDEXED_X, 2, 6);
+SPI_INSTRUCTION_ALIAS(spi_dec, ABSOLUTE, 3, 6);
+SPI_INSTRUCTION_ALIAS(spi_dec, ABSOLUTE_INDEXED_X, 3, 7);
 
-void    spi_bit(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    int8_t      value = spi_cpu_read_value(cpu, mode, mem);
-    spi_byte_t  result = cpu->registers[A] & value;
+SPI_INSTRUCTION_ALIAS(spi_dex, IMPLIED, 1, 2);
 
-    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(result, 7));
-    SPI_SET_FLAGS(cpu->flags, OVERFLOW, SPI_GET_BIT(result, 6));
-    SPI_SET_FLAGS(cpu->flags, ZERO, result == 0);
-}
+SPI_INSTRUCTION_ALIAS(spi_dey, IMPLIED, 1, 2);
 
-SPI_INSTRUCTION_ALIAS(spi_bit, ABSOLUTE, 3, 4);
-SPI_INSTRUCTION_ALIAS(spi_bit, ZERO_PAGE, 2, 3);
+SPI_INSTRUCTION_ALIAS(spi_inc, ZERO_PAGE, 2, 5);
+SPI_INSTRUCTION_ALIAS(spi_inc, ZERO_PAGE_INDEXED_X, 2, 6);
+SPI_INSTRUCTION_ALIAS(spi_inc, ABSOLUTE, 3, 6);
+SPI_INSTRUCTION_ALIAS(spi_inc, ABSOLUTE_INDEXED_X, 3, 7);
+
+SPI_INSTRUCTION_ALIAS(spi_inx, IMPLIED, 1, 2);
+SPI_INSTRUCTION_ALIAS(spi_iny, IMPLIED, 1, 2);
 
 void    spi_register_arithmetic_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0x69] = &SPI_GET_INSTRUCTION_ALIAS(spi_adc, IMMEDIATE);
@@ -117,21 +140,27 @@ void    spi_register_arithmetic_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0x61] = &SPI_GET_INSTRUCTION_ALIAS(spi_adc, INDEXED_INDIRECT);
     cpu->opcode_table[0x71] = &SPI_GET_INSTRUCTION_ALIAS(spi_adc, INDIRECT_INDEXED);
 
-    cpu->opcode_table[0x29] = &SPI_GET_INSTRUCTION_ALIAS(spi_and, IMMEDIATE);
-    cpu->opcode_table[0x25] = &SPI_GET_INSTRUCTION_ALIAS(spi_and, ZERO_PAGE);
-    cpu->opcode_table[0x35] = &SPI_GET_INSTRUCTION_ALIAS(spi_and, ZERO_PAGE_INDEXED_X);
-    cpu->opcode_table[0x2D] = &SPI_GET_INSTRUCTION_ALIAS(spi_and, ABSOLUTE);
-    cpu->opcode_table[0x3D] = &SPI_GET_INSTRUCTION_ALIAS(spi_and, ABSOLUTE_INDEXED_X);
-    cpu->opcode_table[0x39] = &SPI_GET_INSTRUCTION_ALIAS(spi_and, ABSOLUTE_INDEXED_Y);
-    cpu->opcode_table[0x21] = &SPI_GET_INSTRUCTION_ALIAS(spi_and, INDEXED_INDIRECT);
-    cpu->opcode_table[0x31] = &SPI_GET_INSTRUCTION_ALIAS(spi_and, INDIRECT_INDEXED);
-
     cpu->opcode_table[0x0A] = &SPI_GET_INSTRUCTION_ALIAS(spi_asl, ACCUMULATOR);
     cpu->opcode_table[0x06] = &SPI_GET_INSTRUCTION_ALIAS(spi_asl, ZERO_PAGE);
     cpu->opcode_table[0x16] = &SPI_GET_INSTRUCTION_ALIAS(spi_asl, ZERO_PAGE_INDEXED_X);
     cpu->opcode_table[0x0E] = &SPI_GET_INSTRUCTION_ALIAS(spi_asl, ABSOLUTE);
     cpu->opcode_table[0x1E] = &SPI_GET_INSTRUCTION_ALIAS(spi_asl, ABSOLUTE_INDEXED_X);
 
-    cpu->opcode_table[0x24] = &SPI_GET_INSTRUCTION_ALIAS(spi_bit, ZERO_PAGE);
-    cpu->opcode_table[0x2C] = &SPI_GET_INSTRUCTION_ALIAS(spi_bit, ABSOLUTE);
+    cpu->opcode_table[0xC6] = &SPI_GET_INSTRUCTION_ALIAS(spi_dec, ZERO_PAGE);
+    cpu->opcode_table[0xD6] = &SPI_GET_INSTRUCTION_ALIAS(spi_dec, ZERO_PAGE_INDEXED_X);
+    cpu->opcode_table[0xCE] = &SPI_GET_INSTRUCTION_ALIAS(spi_dec, ABSOLUTE);
+    cpu->opcode_table[0xDE] = &SPI_GET_INSTRUCTION_ALIAS(spi_dec, ABSOLUTE_INDEXED_X);
+
+    cpu->opcode_table[0xCA] = &SPI_GET_INSTRUCTION_ALIAS(spi_dex, IMPLIED);
+
+    cpu->opcode_table[0x88] = &SPI_GET_INSTRUCTION_ALIAS(spi_dey, IMPLIED);
+
+    cpu->opcode_table[0xE6] = &SPI_GET_INSTRUCTION_ALIAS(spi_inc, ZERO_PAGE);
+    cpu->opcode_table[0xF6] = &SPI_GET_INSTRUCTION_ALIAS(spi_inc, ZERO_PAGE_INDEXED_X);
+    cpu->opcode_table[0xEE] = &SPI_GET_INSTRUCTION_ALIAS(spi_inc, ABSOLUTE);
+    cpu->opcode_table[0xFE] = &SPI_GET_INSTRUCTION_ALIAS(spi_inc, ABSOLUTE_INDEXED_X);
+
+    cpu->opcode_table[0xE8] = &SPI_GET_INSTRUCTION_ALIAS(spi_inx, IMPLIED);
+
+    cpu->opcode_table[0xC8] = &SPI_GET_INSTRUCTION_ALIAS(spi_iny, IMPLIED);
 }

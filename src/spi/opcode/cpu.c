@@ -22,16 +22,33 @@
  * SOFTWARE.
  */
 
-#ifndef SPI_OPCODE_OPCODE_H
-# define SPI_OPCODE_OPCODE_H
+#include "spi/opcode/cpu.h"
 
-# include "spi/opcode/arithmetic.h"
-# include "spi/opcode/flow-control.h"
-# include "spi/opcode/interrupt.h"
-# include "spi/opcode/cpu.h"
-# include "spi/opcode/comparator.h"
-# include "spi/opcode/bitwise.h"
+void spi_clc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    SPI_DISABLE_FLAG(cpu->flags, CARRY);
+}
 
-void    spi_register_opcodes(spi_cpu_t *cpu);
+void spi_cld(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    SPI_DISABLE_FLAG(cpu->flags, DECIMAL);
+}
 
-#endif //SPI_OPCODE_OPCODE_H
+void spi_cli(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    SPI_DISABLE_FLAG(cpu->flags, DISABLE_INTERRUPTS);
+}
+
+void spi_clv(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    SPI_DISABLE_FLAG(cpu->flags, OVERFLOW);
+}
+
+SPI_INSTRUCTION_ALIAS(spi_clc, IMPLIED, 1, 2);
+SPI_INSTRUCTION_ALIAS(spi_cld, IMPLIED, 1, 2);
+SPI_INSTRUCTION_ALIAS(spi_cli, IMPLIED, 1, 2);
+SPI_INSTRUCTION_ALIAS(spi_clv, IMPLIED, 1, 2);
+
+void spi_register_cpu_opcodes(spi_cpu_t *cpu) {
+    cpu->opcode_table[0x18] = &SPI_GET_INSTRUCTION_ALIAS(spi_clc, IMPLIED);
+    cpu->opcode_table[0xD8] = &SPI_GET_INSTRUCTION_ALIAS(spi_cld, IMPLIED);
+    cpu->opcode_table[0x58] = &SPI_GET_INSTRUCTION_ALIAS(spi_cli, IMPLIED);
+    cpu->opcode_table[0xB8] = &SPI_GET_INSTRUCTION_ALIAS(spi_clv, IMPLIED);
+}
+

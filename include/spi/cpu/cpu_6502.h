@@ -37,14 +37,14 @@
 /*
  * Utility macro for setting and getting flags for cpu status flags
  */
-# define SPI_GET_FLAGS(flags, index) SPI_GET_BIT(flags, index)
-# define SPI_ENABLE_FLAGS(flags, index) SPI_ENABLE_BIT(flags, index)
-# define SPI_ENABLE_FLAGS_IF(flags, index, cond) if (cond) { \
-        SPI_ENABLE_FLAGS(flags, index); \
+# define SPI_GET_FLAG(flags, index) SPI_GET_BIT(flags, index)
+# define SPI_ENABLE_FLAG(flags, index) SPI_ENABLE_BIT(flags, index)
+# define SPI_ENABLE_FLAG_IF(flags, index, cond) if (cond) { \
+        SPI_ENABLE_FLAG(flags, index); \
     }
-# define SPI_DISABLE_FLAGS(flags, index) SPI_DISABLE_BIT(flags, index)
-# define SPI_DISABLE_FLGS_IF(flags, index, cond) if (cond) { \
-        SPI_DISABLE_FLAGS(flags, index); \
+# define SPI_DISABLE_FLAG(flags, index) SPI_DISABLE_BIT(flags, index)
+# define SPI_DISABLE_FLAG_IF(flags, index, cond) if (cond) { \
+        SPI_DISABLE_FLAG(flags, index); \
     }
 # define SPI_SET_FLAGS(flags, index, val) SPI_SET_BIT(flags, index, val)
 
@@ -73,6 +73,8 @@ enum spi_cpu_register_e {
     Y,
     A
 };
+
+typedef enum spi_cpu_register_e spi_cpu_register_t;
 
 enum spi_clock_speed_unit_e {
     HZ = 1,
@@ -105,8 +107,8 @@ enum spi_cpu_status_flags_e {
     OVERFLOW,
     UNUSED,
     BRK_EXECUTED,
-    ENABLE_BCD,
-    BLOCK_INTERRUPTS,
+    DECIMAL,
+    DISABLE_INTERRUPTS,
     ZERO,
     CARRY
 };

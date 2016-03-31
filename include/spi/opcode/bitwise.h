@@ -22,16 +22,14 @@
  * SOFTWARE.
  */
 
-#ifndef SPI_OPCODE_OPCODE_H
-# define SPI_OPCODE_OPCODE_H
+#ifndef SPI_OPCODE_BITWISE_H
+# define SPI_OPCODE_BITWISE_H
 
-# include "spi/opcode/arithmetic.h"
-# include "spi/opcode/flow-control.h"
-# include "spi/opcode/interrupt.h"
-# include "spi/opcode/cpu.h"
-# include "spi/opcode/comparator.h"
-# include "spi/opcode/bitwise.h"
+# include "spi/cpu/cpu_6502.h"
 
-void    spi_register_opcodes(spi_cpu_t *cpu);
+void spi_bit(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_and(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_eor(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_register_bitwise_opcodes(spi_cpu_t *cpu);
 
-#endif //SPI_OPCODE_OPCODE_H
+#endif //SPI_OPCODE_BITWISE_H

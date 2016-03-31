@@ -26,13 +26,15 @@
 #include "spi/cpu/convert.h"
 
 void    spi_brk(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    spi_mem_addr_t brk_addr = SPI_TO_UINT16(mem[0xFFFF], mem[0xFFFE]);
+    if (SPI_GET_FLAG(cpu->flags, DISABLE_INTERRUPTS) == 0) {
+        spi_mem_addr_t brk_addr = SPI_TO_UINT16(mem[0xFFFF], mem[0xFFFE]);
 
-    mem[cpu->sp] = (spi_byte_t)(cpu->pc >> 8);
-    mem[cpu->sp - 1] = (spi_byte_t)(cpu->pc & 0x00FF);
-    mem[cpu->sp - 2] = (spi_byte_t )(cpu->flags | 0x10);
-    cpu->sp -= 3;
-    cpu->pc = brk_addr;
+        mem[cpu->sp] = (spi_byte_t)(cpu->pc >> 8);
+        mem[cpu->sp - 1] = (spi_byte_t)(cpu->pc & 0x00FF);
+        mem[cpu->sp - 2] = (spi_byte_t )(cpu->flags | 0x10);
+        cpu->sp -= 3;
+        cpu->pc = brk_addr;
+    }
 }
 
 SPI_INSTRUCTION_ALIAS(spi_brk, IMPLIED, 1, 7);

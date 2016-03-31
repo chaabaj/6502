@@ -28,4 +28,7 @@ void    spi_register_opcodes(spi_cpu_t *cpu) {
     spi_register_arithmetic_opcodes(cpu);
     spi_register_flow_control_opcodes(cpu);
     spi_register_interrupt_opcodes(cpu);
+    spi_register_cpu_opcodes(cpu);
+    spi_register_comparator_opcodes(cpu);
+    spi_register_bitwise_opcodes(cpu);
 }

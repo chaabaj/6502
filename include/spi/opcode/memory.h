@@ -22,14 +22,14 @@
  * SOFTWARE.
  */
 
-# include "spi/opcode/opcode.h"
+#ifndef SPI_OPCODE_MEMORY_H
+# define SPI_OPCODE_MEMORY_H
 
-void    spi_register_opcodes(spi_cpu_t *cpu) {
-    spi_register_arithmetic_opcodes(cpu);
-    spi_register_flow_control_opcodes(cpu);
-    spi_register_interrupt_opcodes(cpu);
-    spi_register_cpu_opcodes(cpu);
-    spi_register_comparator_opcodes(cpu);
-    spi_register_bitwise_opcodes(cpu);
-    spi_register_memory_opcodes(cpu);
-}
+# include "spi/cpu/cpu_6502.h"
+
+void spi_lda(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_ldx(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_ldy(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_register_memory_opcodes(spi_cpu_t *cpu);
+
+#endif //SPI_OPCODE_MEMORY_H

@@ -54,6 +54,28 @@ void spi_eor(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[A] == 0);
 }
 
+void spi_lsr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_byte_t  value;
+
+    if (mode == ACCUMULATOR) {
+        value = cpu->registers[A];
+    } else {
+        value = spi_cpu_read_value(cpu, mode, mem);
+    }
+    SPI_DISABLE_FLAG(cpu->flags, NEGATIVE);
+    SPI_SET_FLAGS(cpu->flags, CARRY, SPI_GET_BIT(value, 0));
+    value = (spi_byte_t)((value >> 1) & 0x7F);
+    SPI_SET_FLAGS(cpu->flags, ZERO, value == 0);
+}
+
+void spi_ora(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_byte_t value = spi_cpu_read_value(cpu, mode, mem);
+
+    cpu->registers[A] |= value;
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(cpu->registers[A], 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[A] == 0);
+}
+
 SPI_INSTRUCTION_ALIAS(spi_bit, ABSOLUTE, 3, 4);
 SPI_INSTRUCTION_ALIAS(spi_bit, ZERO_PAGE, 2, 3);
 
@@ -74,6 +96,21 @@ SPI_INSTRUCTION_ALIAS(spi_eor, ABSOLUTE_INDEXED_X, 3, 4);
 SPI_INSTRUCTION_ALIAS(spi_eor, ABSOLUTE_INDEXED_Y, 3, 4);
 SPI_INSTRUCTION_ALIAS(spi_eor, INDEXED_INDIRECT, 2, 6);
 SPI_INSTRUCTION_ALIAS(spi_eor, INDIRECT_INDEXED, 2, 5);
+
+SPI_INSTRUCTION_ALIAS(spi_lsr, ACCUMULATOR, 1, 2);
+SPI_INSTRUCTION_ALIAS(spi_lsr, ZERO_PAGE, 2, 5);
+SPI_INSTRUCTION_ALIAS(spi_lsr, ZERO_PAGE_INDEXED_X, 2, 6);
+SPI_INSTRUCTION_ALIAS(spi_lsr, ABSOLUTE, 3, 6);
+SPI_INSTRUCTION_ALIAS(spi_lsr, ABSOLUTE_INDEXED_X, 3, 7);
+
+SPI_INSTRUCTION_ALIAS(spi_ora, IMMEDIATE, 2, 2);
+SPI_INSTRUCTION_ALIAS(spi_ora, ZERO_PAGE, 2, 2);
+SPI_INSTRUCTION_ALIAS(spi_ora, ZERO_PAGE_INDEXED_X, 2, 3);
+SPI_INSTRUCTION_ALIAS(spi_ora, ABSOLUTE, 3, 4);
+SPI_INSTRUCTION_ALIAS(spi_ora, ABSOLUTE_INDEXED_X, 3, 4);
+SPI_INSTRUCTION_ALIAS(spi_ora, ABSOLUTE_INDEXED_Y, 3, 4);
+SPI_INSTRUCTION_ALIAS(spi_ora, INDEXED_INDIRECT, 2, 6);
+SPI_INSTRUCTION_ALIAS(spi_ora, INDIRECT_INDEXED, 2, 5);
 
 void spi_register_bitwise_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0x29] = &SPI_GET_INSTRUCTION_ALIAS(spi_and, IMMEDIATE);
@@ -96,4 +133,19 @@ void spi_register_bitwise_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0x59] = &SPI_GET_INSTRUCTION_ALIAS(spi_eor, ABSOLUTE_INDEXED_Y);
     cpu->opcode_table[0x41] = &SPI_GET_INSTRUCTION_ALIAS(spi_eor, INDEXED_INDIRECT);
     cpu->opcode_table[0x51] = &SPI_GET_INSTRUCTION_ALIAS(spi_eor, INDIRECT_INDEXED);
+
+    cpu->opcode_table[0x4A] = &SPI_GET_INSTRUCTION_ALIAS(spi_lsr, ACCUMULATOR);
+    cpu->opcode_table[0x46] = &SPI_GET_INSTRUCTION_ALIAS(spi_lsr, ZERO_PAGE);
+    cpu->opcode_table[0x56] = &SPI_GET_INSTRUCTION_ALIAS(spi_lsr, ZERO_PAGE_INDEXED_X);
+    cpu->opcode_table[0x4E] = &SPI_GET_INSTRUCTION_ALIAS(spi_lsr, ABSOLUTE);
+    cpu->opcode_table[0x5E] = &SPI_GET_INSTRUCTION_ALIAS(spi_lsr, ABSOLUTE_INDEXED_X);
+
+    cpu->opcode_table[0x09] = &SPI_GET_INSTRUCTION_ALIAS(spi_ora, IMMEDIATE);
+    cpu->opcode_table[0x05] = &SPI_GET_INSTRUCTION_ALIAS(spi_ora, ZERO_PAGE);
+    cpu->opcode_table[0x15] = &SPI_GET_INSTRUCTION_ALIAS(spi_ora, ZERO_PAGE_INDEXED_X);
+    cpu->opcode_table[0x0D] = &SPI_GET_INSTRUCTION_ALIAS(spi_ora, ABSOLUTE);
+    cpu->opcode_table[0x1D] = &SPI_GET_INSTRUCTION_ALIAS(spi_ora, ABSOLUTE_INDEXED_X);
+    cpu->opcode_table[0x19] = &SPI_GET_INSTRUCTION_ALIAS(spi_ora, ABSOLUTE_INDEXED_Y);
+    cpu->opcode_table[0x01] = &SPI_GET_INSTRUCTION_ALIAS(spi_ora, INDEXED_INDIRECT);
+    cpu->opcode_table[0x11] = &SPI_GET_INSTRUCTION_ALIAS(spi_ora, INDIRECT_INDEXED);
 }

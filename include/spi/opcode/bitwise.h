@@ -30,6 +30,8 @@
 void spi_bit(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 void spi_and(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 void spi_eor(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_lsr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_ora(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 void spi_register_bitwise_opcodes(spi_cpu_t *cpu);
 
 #endif //SPI_OPCODE_BITWISE_H

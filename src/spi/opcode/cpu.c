@@ -40,15 +40,27 @@ void spi_clv(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     SPI_DISABLE_FLAG(cpu->flags, OVERFLOW);
 }
 
+void spi_nop(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {}
+
 SPI_INSTRUCTION_ALIAS(spi_clc, IMPLIED, 1, 2);
+
 SPI_INSTRUCTION_ALIAS(spi_cld, IMPLIED, 1, 2);
+
 SPI_INSTRUCTION_ALIAS(spi_cli, IMPLIED, 1, 2);
+
 SPI_INSTRUCTION_ALIAS(spi_clv, IMPLIED, 1, 2);
+
+SPI_INSTRUCTION_ALIAS(spi_nop, IMPLIED, 1, 2);
 
 void spi_register_cpu_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0x18] = &SPI_GET_INSTRUCTION_ALIAS(spi_clc, IMPLIED);
+
     cpu->opcode_table[0xD8] = &SPI_GET_INSTRUCTION_ALIAS(spi_cld, IMPLIED);
+
     cpu->opcode_table[0x58] = &SPI_GET_INSTRUCTION_ALIAS(spi_cli, IMPLIED);
+
     cpu->opcode_table[0xB8] = &SPI_GET_INSTRUCTION_ALIAS(spi_clv, IMPLIED);
+
+    cpu->opcode_table[0xEA] = &SPI_GET_INSTRUCTION_ALIAS(spi_nop, IMPLIED);
 }
 

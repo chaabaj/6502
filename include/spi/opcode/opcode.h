@@ -31,6 +31,7 @@
 # include "spi/opcode/cpu.h"
 # include "spi/opcode/comparator.h"
 # include "spi/opcode/bitwise.h"
+# include "spi/opcode/memory.h"
 
 void    spi_register_opcodes(spi_cpu_t *cpu);
 

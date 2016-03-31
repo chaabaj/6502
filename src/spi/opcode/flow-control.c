@@ -33,6 +33,17 @@ SPI_OPCODE_CONDITIONAL_BRANCH(spi_bpl, SPI_GET_FLAG(cpu->flags, NEGATIVE) == 0);
 SPI_OPCODE_CONDITIONAL_BRANCH(spi_bvc, SPI_GET_FLAG(cpu->flags, OVERFLOW) == 0);
 SPI_OPCODE_CONDITIONAL_BRANCH(spi_bvs, SPI_GET_FLAG(cpu->flags, OVERFLOW) == 1);
 
+void    spi_jmp(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    cpu->pc = spi_cpu_get_addr(cpu, mode, mem);
+}
+
+void    spi_jsr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    mem[cpu->sp] = (spi_byte_t)(cpu->pc >> 8);
+    mem[cpu->sp - 1] = (spi_byte_t)(cpu->pc & 0x00FF);
+    cpu->sp -= 2;
+    cpu->pc = spi_cpu_get_addr(cpu, mode, mem);
+}
+
 SPI_INSTRUCTION_ALIAS(spi_bcc, RELATIVE, 2, 2);
 SPI_INSTRUCTION_ALIAS(spi_bcs, RELATIVE, 2, 2);
 SPI_INSTRUCTION_ALIAS(spi_beq, RELATIVE, 2, 2);

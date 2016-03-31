@@ -34,22 +34,26 @@ spi_mem_addr_t  spi_cpu_get_addr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_by
         case RELATIVE : return cpu->pc;
         case ABSOLUTE : return SPI_TO_UINT16(mem[cpu->pc + 1], mem[cpu->pc]);
         case ABSOLUTE_INDEXED_X : {
-            return (uint16_t)((SPI_TO_UINT16(mem[cpu->pc + 1], (mem[cpu->pc] + cpu->registers[X]))) & 0xFFFF);
+            return (spi_mem_addr_t)((SPI_TO_UINT16(mem[cpu->pc + 1], (mem[cpu->pc] + cpu->registers[X]))) & 0xFFFF);
         }
         case ABSOLUTE_INDEXED_Y : {
-            return (uint16_t)((SPI_TO_UINT16(mem[cpu->pc + 1], (mem[cpu->pc] + cpu->registers[Y]))) & 0xFFFF);
+            return (spi_mem_addr_t)((SPI_TO_UINT16(mem[cpu->pc + 1], (mem[cpu->pc] + cpu->registers[Y]))) & 0xFFFF);
         }
         case ZERO_PAGE : return mem[cpu->pc];
         case ZERO_PAGE_INDEXED_X : return (uint16_t)((mem[cpu->pc] + cpu->registers[X]) & 0xFF);
         case ZERO_PAGE_INDEXED_Y : return (uint16_t)((mem[cpu->pc] + cpu->registers[Y]) & 0xFF);
-        case INDIRECT : return SPI_TO_UINT16(mem[cpu->pc + 1], mem[cpu->pc]);
+        case INDIRECT : {
+            spi_mem_addr_t zp_addr = mem[cpu->pc];
+
+            return SPI_TO_UINT16(mem[zp_addr + 1], mem[zp_addr]);
+        }
         case INDEXED_INDIRECT : {
-            return SPI_TO_UINT16((mem[cpu->pc] + cpu->registers[X] + 1), (mem[cpu->pc] + cpu->registers[X]));
+            spi_mem_addr_t zp_addr = mem[cpu->pc];
+
+            return SPI_TO_UINT16(mem[zp_addr + cpu->registers[X] + 1], mem[zp_addr] + cpu->registers[X]);
         }
         case INDIRECT_INDEXED : {
-            spi_mem_addr_t addr = SPI_TO_UINT16(mem[cpu->pc + 1], mem[cpu->pc]);
-
-            return (spi_mem_addr_t)((addr + cpu->registers[Y]) & 0xFFFF);
+            return spi_cpu_get_addr(cpu, INDIRECT, mem) + cpu->registers[Y];
         }
         default: {
             // Other case have no sense to read a value in the memory

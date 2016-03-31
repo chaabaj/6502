@@ -26,12 +26,14 @@
 #include "spi/debug.h"
 
 void spi_bit(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    int8_t      value = spi_cpu_read_value(cpu, mode, mem);
-    spi_byte_t  result = cpu->registers[A] & value;
+    spi_mem_addr_t  addr = spi_cpu_get_addr(cpu, mode, mem);
+    spi_byte_t      value = mem[addr];
+    spi_byte_t      result = cpu->registers[A] & value;
 
     SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(result, 7));
     SPI_SET_FLAGS(cpu->flags, OVERFLOW, SPI_GET_BIT(result, 6));
     SPI_SET_FLAGS(cpu->flags, ZERO, result == 0);
+    mem[addr] = result;
 }
 
 void spi_and(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
@@ -55,17 +57,24 @@ void spi_eor(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
 }
 
 void spi_lsr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    spi_byte_t  value;
+    spi_byte_t      value;
+    spi_mem_addr_t  value_addr = 0;
 
     if (mode == ACCUMULATOR) {
         value = cpu->registers[A];
     } else {
-        value = spi_cpu_read_value(cpu, mode, mem);
+        value_addr = spi_cpu_get_addr(cpu, mode, mem);
+        value = mem[value_addr];
     }
     SPI_DISABLE_FLAG(cpu->flags, NEGATIVE);
     SPI_SET_FLAGS(cpu->flags, CARRY, SPI_GET_BIT(value, 0));
     value = (spi_byte_t)((value >> 1) & 0x7F);
     SPI_SET_FLAGS(cpu->flags, ZERO, value == 0);
+    if (mode == ACCUMULATOR) {
+        cpu->registers[A] = value;
+    } else {
+        mem[value_addr] = value;
+    }
 }
 
 void spi_ora(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
@@ -74,6 +83,54 @@ void spi_ora(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     cpu->registers[A] |= value;
     SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(cpu->registers[A], 7));
     SPI_SET_FLAGS(cpu->flags, ZERO, cpu->registers[A] == 0);
+}
+
+void spi_rol(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_byte_t      value;
+    spi_mem_addr_t  value_addr = 0;
+    spi_byte_t t;
+
+    if (mode == ACCUMULATOR) {
+        value = cpu->registers[A];
+    } else {
+        value_addr = spi_cpu_get_addr(cpu, mode, mem);
+        value = mem[value_addr];
+    }
+    t = SPI_GET_BIT(value, 7);
+    value = (spi_byte_t )((value << 1) & 0xFE);
+    value |= SPI_GET_FLAG(cpu->flags, CARRY);
+    SPI_SET_FLAGS(cpu->flags, CARRY, t);
+    SPI_SET_FLAGS(cpu->flags, ZERO, value == 0);
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(value, 7));
+    if (mode == ACCUMULATOR) {
+        cpu->registers[A] = value;
+    } else {
+        mem[value_addr] = value;
+    }
+}
+
+void spi_ror(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    spi_byte_t      value;
+    spi_mem_addr_t  addr = 0;
+    spi_byte_t      t;
+
+    if (mode == ACCUMULATOR) {
+        value = cpu->registers[A];
+    } else {
+        addr = spi_cpu_get_addr(cpu, mode, mem);
+        value = mem[addr];
+    }
+    t = SPI_GET_BIT(value, 0);
+    value = (spi_byte_t )((value >> 1) & 0x7F);
+    value |= (SPI_GET_FLAG(cpu->flags, CARRY) ? 0x80 : 0x00);
+    SPI_SET_FLAGS(cpu->flags, CARRY, t);
+    SPI_SET_FLAGS(cpu->flags, ZERO, value == 0);
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(value, 7));
+    if (mode == ACCUMULATOR) {
+        cpu->registers[A] = value;
+    } else {
+        mem[addr] = value;
+    }
 }
 
 SPI_INSTRUCTION_ALIAS(spi_bit, ABSOLUTE, 3, 4);
@@ -112,6 +169,18 @@ SPI_INSTRUCTION_ALIAS(spi_ora, ABSOLUTE_INDEXED_Y, 3, 4);
 SPI_INSTRUCTION_ALIAS(spi_ora, INDEXED_INDIRECT, 2, 6);
 SPI_INSTRUCTION_ALIAS(spi_ora, INDIRECT_INDEXED, 2, 5);
 
+SPI_INSTRUCTION_ALIAS(spi_rol, ACCUMULATOR, 1, 2);
+SPI_INSTRUCTION_ALIAS(spi_rol, ZERO_PAGE, 2, 5);
+SPI_INSTRUCTION_ALIAS(spi_rol, ZERO_PAGE_INDEXED_X, 2, 6);
+SPI_INSTRUCTION_ALIAS(spi_rol, ABSOLUTE, 3, 6);
+SPI_INSTRUCTION_ALIAS(spi_rol, ABSOLUTE_INDEXED_X, 3, 7);
+
+SPI_INSTRUCTION_ALIAS(spi_ror, ACCUMULATOR, 1, 2);
+SPI_INSTRUCTION_ALIAS(spi_ror, ZERO_PAGE, 2, 5);
+SPI_INSTRUCTION_ALIAS(spi_ror, ZERO_PAGE_INDEXED_X, 2, 6);
+SPI_INSTRUCTION_ALIAS(spi_ror, ABSOLUTE, 3, 6);
+SPI_INSTRUCTION_ALIAS(spi_ror, ABSOLUTE_INDEXED_X, 3, 7);
+
 void spi_register_bitwise_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0x29] = &SPI_GET_INSTRUCTION_ALIAS(spi_and, IMMEDIATE);
     cpu->opcode_table[0x25] = &SPI_GET_INSTRUCTION_ALIAS(spi_and, ZERO_PAGE);
@@ -148,4 +217,16 @@ void spi_register_bitwise_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0x19] = &SPI_GET_INSTRUCTION_ALIAS(spi_ora, ABSOLUTE_INDEXED_Y);
     cpu->opcode_table[0x01] = &SPI_GET_INSTRUCTION_ALIAS(spi_ora, INDEXED_INDIRECT);
     cpu->opcode_table[0x11] = &SPI_GET_INSTRUCTION_ALIAS(spi_ora, INDIRECT_INDEXED);
+
+    cpu->opcode_table[0x2A] = &SPI_GET_INSTRUCTION_ALIAS(spi_rol, ACCUMULATOR);
+    cpu->opcode_table[0x26] = &SPI_GET_INSTRUCTION_ALIAS(spi_rol, ZERO_PAGE);
+    cpu->opcode_table[0x36] = &SPI_GET_INSTRUCTION_ALIAS(spi_rol, ZERO_PAGE_INDEXED_X);
+    cpu->opcode_table[0x2E] = &SPI_GET_INSTRUCTION_ALIAS(spi_rol, ABSOLUTE);
+    cpu->opcode_table[0x3E] = &SPI_GET_INSTRUCTION_ALIAS(spi_rol, ABSOLUTE_INDEXED_X);
+
+    cpu->opcode_table[0x6A] = &SPI_GET_INSTRUCTION_ALIAS(spi_ror, ACCUMULATOR);
+    cpu->opcode_table[0x66] = &SPI_GET_INSTRUCTION_ALIAS(spi_ror, ZERO_PAGE);
+    cpu->opcode_table[0x76] = &SPI_GET_INSTRUCTION_ALIAS(spi_ror, ZERO_PAGE_INDEXED_X);
+    cpu->opcode_table[0x6E] = &SPI_GET_INSTRUCTION_ALIAS(spi_ror, ABSOLUTE);
+    cpu->opcode_table[0x7E] = &SPI_GET_INSTRUCTION_ALIAS(spi_ror, ABSOLUTE_INDEXED_X);
 }

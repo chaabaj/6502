@@ -22,18 +22,15 @@
  * SOFTWARE.
  */
 
-#ifndef SPI_OPCODE_OPCODE_H
-# define SPI_OPCODE_OPCODE_H
+#ifndef SPI_OPCODE_STACK_H
+# define SPI_OPCODE_STACK_H
 
-# include "spi/opcode/arithmetic.h"
-# include "spi/opcode/flow-control.h"
-# include "spi/opcode/interrupt.h"
-# include "spi/opcode/cpu.h"
-# include "spi/opcode/comparator.h"
-# include "spi/opcode/bitwise.h"
-# include "spi/opcode/memory.h"
-# include "spi/opcode/stack.h"
+# include "spi/cpu/cpu_6502.h"
 
-void    spi_register_opcodes(spi_cpu_t *cpu);
+void spi_pha(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_php(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_pla(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_plp(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+void spi_register_stack_opcodes(spi_cpu_t *cpu);
 
-#endif //SPI_OPCODE_OPCODE_H
+#endif //SPI_OPCODE_STACK_H

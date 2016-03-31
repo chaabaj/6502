@@ -45,17 +45,24 @@ void    spi_adc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
 }
 
 void spi_asl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    spi_byte_t value;
+    spi_mem_addr_t  addr = 0;
+    spi_byte_t      value;
 
     if (mode == ACCUMULATOR) {
         value = cpu->registers[A];
     } else {
-        value = spi_cpu_read_value(cpu, mode, mem);
+        addr = spi_cpu_get_addr(cpu, mode, mem);
+        value = mem[addr];
     }
     SPI_SET_FLAGS(cpu->flags, CARRY, SPI_GET_BIT(value, 7));
     value = (uint8_t)((value << 1) & 0xFE);
     SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(value, 7));
     SPI_SET_FLAGS(cpu->flags, ZERO, value == 0 ? 1 : 0);
+    if (mode == ACCUMULATOR) {
+        cpu->registers[A] = value;
+    } else {
+        mem[addr] = value;
+    }
 }
 
 void spi_dec(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {

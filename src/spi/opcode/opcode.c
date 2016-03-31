@@ -32,4 +32,5 @@ void    spi_register_opcodes(spi_cpu_t *cpu) {
     spi_register_comparator_opcodes(cpu);
     spi_register_bitwise_opcodes(cpu);
     spi_register_memory_opcodes(cpu);
+    spi_register_stack_opcodes(cpu);
 }

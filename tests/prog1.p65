@@ -1,0 +1,12 @@
+.org $C000
+
+Reset:	LDX #$FF
+	TXS
+
+Init:
+	CLI
+	CLD
+
+Loop:
+	ADC #$A5
+	JMP Loop

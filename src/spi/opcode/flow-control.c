@@ -35,13 +35,16 @@ SPI_OPCODE_CONDITIONAL_BRANCH(spi_bvc, SPI_GET_FLAG(cpu->flags, OVERFLOW) == 0);
 SPI_OPCODE_CONDITIONAL_BRANCH(spi_bvs, SPI_GET_FLAG(cpu->flags, OVERFLOW) == 1);
 
 void    spi_jmp(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
+    PRINT_DEBUG("JUMP TO ADDR : %d",  spi_cpu_get_addr(cpu, mode, mem));
     cpu->pc = spi_cpu_get_addr(cpu, mode, mem);
+    cpu->jmp_occured = 1;
 }
 
 void    spi_jsr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     spi_cpu_push_stack(cpu, mem, (spi_byte_t )(cpu->pc >> 8));
     spi_cpu_push_stack(cpu, mem, (spi_byte_t)(cpu->pc &0x00FF));
     cpu->pc = spi_cpu_get_addr(cpu, mode, mem);
+    cpu->jmp_occured = 1;
 }
 
 void spi_rti(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {

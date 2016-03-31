@@ -50,7 +50,7 @@ spi_mem_addr_t  spi_cpu_get_addr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_by
         case INDEXED_INDIRECT : {
             spi_mem_addr_t zp_addr = mem[cpu->pc];
 
-            return SPI_TO_UINT16(mem[zp_addr + cpu->registers[X] + 1], mem[zp_addr] + cpu->registers[X]);
+            return SPI_TO_UINT16((mem[zp_addr + cpu->registers[X] + 1]), (mem[zp_addr] + cpu->registers[X]));
         }
         case INDIRECT_INDEXED : {
             return spi_cpu_get_addr(cpu, INDIRECT, mem) + cpu->registers[Y];
@@ -82,9 +82,15 @@ void    spi_cpu_init(spi_cpu_t *cpu, double speed, enum spi_clock_speed_unit_e u
 
 void    spi_cpu_reset(spi_cpu_t *cpu, spi_byte_t *mem, const spi_program_config_t *cfg) {
     PRINT_DEBUG("RESET CPU", "");
-    cpu->pc = SPI_TO_UINT16(mem[cfg->reset_vector_offset + 1], mem[cfg->reset_vector_offset]);
+    spi_mem_addr_t prog_start_addr = SPI_TO_UINT16(mem[cfg->reset_vector_offset + 1], mem[cfg->reset_vector_offset]);
+
+    if (prog_start_addr == 0) {
+        prog_start_addr = cfg->load_addr;
+    }
+    cpu->pc = prog_start_addr;
     printf("PC iIS INITIALIZED AT : %X\n", cpu->pc);
-    cpu->sp = 0x1FF;
+    cpu->sp = 0xFF;
+    cpu->stack_addr = cfg->stack_addr;
     SPI_ENABLE_FLAG(cpu->flags, DISABLE_INTERRUPTS);
 }
 

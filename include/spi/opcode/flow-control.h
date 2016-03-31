@@ -32,6 +32,7 @@
         int8_t  rel_addr = spi_cpu_read_value(cpu, mode, mem);              \
                                                                             \
         if (condition) {                                                    \
+            cpu->jmp_occured = 1;                                           \
             cpu->pc += rel_addr;                                            \
         }                                                                   \
     }

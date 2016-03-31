@@ -41,6 +41,7 @@ static spi_program_config_t prg_16k() {
     cfg.load_addr = 0xC000;
     cfg.prg_size = 16 * 1024;
     cfg.reset_vector_offset = 0xFFFC;
+    cfg.stack_addr = 0x100;
     return cfg;
 }
 
@@ -53,7 +54,7 @@ int main(int ac, char **av) {
     bzero(memory, MEM_SIZE);
     if (ac > 1) {
         PRINT_DEBUG("START LOADING PROGRAM %s", av[1]);
-        if ((err = spi_load_program(av[1], memory, &cfg)) != 0) {
+        if ((err = spi_load_program(av[1], memory, &cfg, IGNORE_PRG_SIZE)) != 0) {
             spi_print_error(err);
             return EXIT_FAILURE;
         }
@@ -62,10 +63,10 @@ int main(int ac, char **av) {
         spi_dump_memory(memory, MEM_SIZE, 0xFFFC, 0xFFFF);
         spi_cpu_reset(&cpu, memory, &cfg);
 
-//        while (1) {
-        spi_cpu_execute(&cpu, memory);
-        spi_cpu_execute(&cpu, memory);
-  //      }
+        while (1) {
+            spi_cpu_execute(&cpu, memory);
+            getchar();
+        }
     } else {
         print_usage();
     }

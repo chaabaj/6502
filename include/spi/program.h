@@ -31,16 +31,25 @@
 struct spi_program_config_s {
     size_t          prg_size;
     spi_mem_addr_t  reset_vector_offset;
+    spi_mem_addr_t  stack_addr;
     spi_mem_addr_t  load_addr;
 };
 
 typedef struct spi_program_config_s spi_program_config_t;
 
+enum spi_program_flags_e {
+    IGNORE_PRG_SIZE = 1
+};
+
+typedef enum spi_program_flags_e spi_program_flags_t;
 /*
  * Load a 6502 program
  * You must specify a program configuration to tell where to put the program
  * and tell the cpu where is the reset vector
  */
-int spi_load_program(const char *file, spi_byte_t *mem, const spi_program_config_t *config);
+int spi_load_program(const char *file,
+                     spi_byte_t *mem,
+                     const spi_program_config_t *config,
+                     int flags);
 
 #endif //SPI_PROGRAM_H

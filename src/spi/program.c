@@ -26,7 +26,10 @@
 #include "spi/program.h"
 #include "spi/error.h"
 
-int spi_load_program(const char *path, spi_byte_t *mem, const spi_program_config_t *config) {
+int spi_load_program(const char *path,
+                     spi_byte_t *mem,
+                     const spi_program_config_t *config,
+                     int flags) {
     FILE            *file = fopen(path, "rb");
     size_t          len = 0;
     size_t          ret = 1;
@@ -41,7 +44,7 @@ int spi_load_program(const char *path, spi_byte_t *mem, const spi_program_config
     if (ferror(file)) {
         return SPI_CANNOT_READ_FILE;
     }
-    else if (len != config->prg_size) {
+    else if (len != config->prg_size && !(flags & IGNORE_PRG_SIZE)) {
         return SPI_INVALID_ROM_SIZE;
     }
     fclose(file);

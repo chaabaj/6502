@@ -29,6 +29,7 @@
 # include "spi/cpu/types.h"
 # include "spi/cpu/bits.h"
 # include "spi/program.h"
+# include "spi/debug.h"
 
 # define SPI_NB_OPCODE 256
 # define SPI_NB_REGISTER 3
@@ -62,8 +63,13 @@
 # define SPI_GET_INSTRUCTION_ALIAS(name, address_mode) name##address_mode
 # define SPI_INSTRUCTION_ALIAS(name, address_mode, size, nb_cycle) \
     static int32_t SPI_GET_INSTRUCTION_ALIAS(name, address_mode)(spi_cpu_t *cpu, spi_byte_t *mem) { \
+        PRINT_DEBUG("Instruction executed is : %s", #name) \
         ++cpu->pc;                      \
         name(cpu, address_mode, mem);   \
+        if (cpu->jmp_occured) {         \
+            cpu->jmp_occured = 0;       \
+            return nb_cycle;            \
+        }                               \
         cpu->pc += size - 1;            \
         return nb_cycle;                \
     }
@@ -120,6 +126,7 @@ struct spi_cpu_s {
     spi_byte_t          flags;
     spi_mem_addr_t      pc;
     uint8_t             sp;
+    uint8_t             jmp_occured;
     spi_mem_addr_t      stack_addr;
     uint32_t            available_cycles;
     uint32_t            total_cycles;

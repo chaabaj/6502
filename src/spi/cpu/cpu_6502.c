@@ -31,7 +31,7 @@
 spi_mem_addr_t  spi_cpu_get_addr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     switch (mode) {
         case IMMEDIATE : return cpu->pc;
-        case RELATIVE : return cpu->pc;
+        case RELATIVE : return mem[cpu->pc];
         case ABSOLUTE : return SPI_TO_UINT16(mem[cpu->pc + 1], mem[cpu->pc]);
         case ABSOLUTE_INDEXED_X : {
             return (spi_mem_addr_t)((SPI_TO_UINT16(mem[cpu->pc + 1], (mem[cpu->pc] + cpu->registers[X]))) & 0xFFFF);
@@ -97,10 +97,10 @@ void    spi_cpu_reset(spi_cpu_t *cpu, spi_byte_t *mem, const spi_program_config_
 void    spi_cpu_execute(spi_cpu_t *cpu, spi_byte_t *mem) {
     spi_byte_t  opcode = (spi_byte_t)mem[cpu->pc];
 
-    PRINT_DEBUG("CURRENT PROGRAM COUNTER : %d", cpu->pc);
-    PRINT_DEBUG("SEARCH OPCODE : %d", opcode);
+    PRINT_DEBUG("CURRENT PROGRAM COUNTER : %X", cpu->pc);
+    PRINT_DEBUG("SEARCH OPCODE : %X", opcode);
     if (cpu->opcode_table[opcode]) {
-        PRINT_DEBUG("EXECUTE OPCODE : %d", opcode);
+        PRINT_DEBUG("EXECUTE OPCODE : %X", opcode);
         cpu->opcode_table[opcode](cpu, mem);
     }
 }
@@ -113,6 +113,5 @@ void spi_cpu_push_stack(spi_cpu_t *cpu, spi_byte_t *mem, spi_byte_t value) {
 
 spi_byte_t spi_cpu_pull_stack(spi_cpu_t *cpu, spi_byte_t *mem) {
     cpu->sp++;
-
     return mem[cpu->stack_addr + cpu->sp];
 }

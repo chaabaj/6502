@@ -29,7 +29,6 @@ void    spi_adc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     spi_byte_t byte = spi_cpu_read_value(cpu, mode, mem);
     int result = cpu->registers[A] + byte + SPI_GET_FLAG(cpu->flags, CARRY);
 
-    PRINT_DEBUG("VALUE : %d", byte);
     SPI_ENABLE_FLAG_IF(cpu->flags, OVERFLOW, result > 255)
     SPI_ENABLE_FLAG_IF(cpu->flags, NEGATIVE, (int8_t)(result) < 0)
     SPI_ENABLE_FLAG_IF(cpu->flags, ZERO, result == 0)
@@ -40,8 +39,6 @@ void    spi_adc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
         SPI_ENABLE_FLAG_IF(cpu->flags, CARRY, result > 255)
     }
     cpu->registers[A] = (spi_byte_t)result;
-    PRINT_DEBUG("PROCESSOR STATUS : %X", cpu->flags);
-    PRINT_DEBUG("ACCUMULATOR VALUE : %d", (spi_byte_t)result);
 }
 
 void spi_asl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {

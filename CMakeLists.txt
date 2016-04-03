@@ -1,18 +1,19 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.6)
 
-project(emulator)
+project(spi_6502)
 
 file(GLOB_RECURSE SRCS "src/*.c")
 file(GLOB_RECURSE HEADERS "include/*.h")
 
 if (UNIX OR APPLE)
-    set(CMAKE_C_FLAGS "-ggdb -Wall")
+    add_definitions("-Wall -ggdb")
 endif()
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ../lib)
 
 include_directories(include)
 
-add_executable(6502 ${SRCS} ${HEADERS})
+add_library(spi_6502 SHARED ${SRCS} ${HEADERS})
+add_subdirectory(tests)
 
-install(TARGETS 6502 DESTINATION ../bin)
-
-target_link_libraries (6502 ${CMAKE_DL_LIBS})
+TARGET_LINK_LIBRARIES(spi_6502 ${CMAKE_DL_LIBS})

@@ -11,10 +11,10 @@ endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../)
 
-include_directories(include/ ../../include)
+include_directories(include/ ../../include ../tools/include)
 
 add_executable(test_arithmetic ${SRCS} ${HEADERS})
 
 install(TARGETS test_arithmetic DESTINATION ../)
 
-target_link_libraries(test_arithmetic spi_6502 ${CMAKE_DL_LIBS})
+target_link_libraries(test_arithmetic spi_6502 spi_test_tools ${CMAKE_DL_LIBS})

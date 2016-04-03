@@ -22,27 +22,29 @@
  * SOFTWARE.
  */
 
-#include <assert.h>
-#include "test_adc.h"
-#include "tools/instruction.h"
+# include "tools/instruction.h"
 
-static void test_adc_immediate(spi_cpu_t *cpu, spi_byte_t *mem) {
-    (void)mem;
-    assert(cpu->registers[A] == 0x40);
+void spi_test_init_registers(spi_cpu_t *cpu, spi_byte_t va,
+                             spi_byte_t vx, spi_byte_t vy) {
+    cpu->registers[A] = va;
+    cpu->registers[X] = vx;
+    cpu->registers[Y] = vy;
 }
 
+void spi_test_instruction(const spi_byte_t *opcodes, const uint16_t *values,
+                          size_t nb_opcodes, spi_test_fn_t fn,
+                          spi_cpu_t *cpu, spi_byte_t *mem) {
 
-static void test_adc_immediate_with_carry(spi_cpu_t *cpu, spi_byte_t *mem) {
-    (void)mem;
-    assert(cpu->registers[A] == 0x41);
-}
+    for (size_t i = 0; i < nb_opcodes; ++i) {
+        cpu->flags = 0;
+        cpu->pc = 0xC000;
+        cpu->sp = 0xFF;
+        SPI_ENABLE_FLAG(cpu->flags, DISABLE_INTERRUPTS);
+        mem[0xC000] = opcodes[i];
+        mem[0xC001] = (spi_byte_t)(values[i] & 0xFF);
+        mem[0xC002] = (spi_byte_t)(values[i] >> 8);
+        spi_cpu_execute(cpu, mem);
+        (*fn)(cpu, mem);
+    }
 
-void spi_run_test_adc(spi_cpu_t *cpu, spi_byte_t *mem) {
-    spi_byte_t  opcodes[8] = {0x69, 0x65, 0x75, 0x6D, 0x7D, 0x79, 0x61, 0x71};
-    uint16_t    values[8] = {0x0040, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040, 0x0040};
-
-    spi_test_init_registers(cpu, 0, 0, 0);
-    spi_test_instruction(opcodes, values, 8, &test_adc_immediate, cpu, mem);
-    spi_test_init_registers(cpu, 0, 0, 0);
-    spi_test_instruction(opcodes, values, 8, &test_adc_immediate_with_carry, cpu, mem);
 }

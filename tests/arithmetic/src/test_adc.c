@@ -41,7 +41,7 @@ static void test_adc_with_carry(spi_cpu_t *cpu, spi_byte_t *mem) {
 
 static void test_adc_with_overflow(spi_cpu_t *cpu, spi_byte_t *mem) {
     (void)mem;
-    assert(cpu->registers[A] == 0x39);
+    assert(cpu->registers[A] == 0x3F);
     assert(SPI_GET_FLAG(cpu->flags, CARRY) == 1);
     assert(SPI_GET_FLAG(cpu->flags, OVERFLOW) == 1);
 }
@@ -77,11 +77,17 @@ void spi_run_test_adc(spi_cpu_t *cpu, spi_byte_t *mem) {
                              &test_adc_with_carry, &env);
     });
 
-    /*spi_test_instruction(opcodes, values, 8, &test_adc_with_carry,
-                         cpu, 1 << CARRY, mem); */
-
-    /*spi_test_init_registers(cpu, 0xFF, 0, 0);
-
-    spi_test_instruction(opcodes, values, 8, &test_adc_with_overflow,
-                         cpu, 1 << DISABLE_INTERRUPTS, mem);*/
+    SPI_UNIT_TEST(cpu, mem, MEM_SIZE, {
+        bzero(env.mem, MEM_SIZE);
+        env.mem[0x40] = 0x40;
+        env.mem[0x41] = 0x40;
+        env.mem[0x4040] = 0x40;
+        env.mem[0x4041] = 0x40;
+        env.mem[0x4141] = 0x40;
+        env.cpu.registers[X] = 1;
+        env.cpu.registers[Y] = 1;
+        env.cpu.registers[A] = 0xFF;
+        spi_test_instruction(opcodes, value, 8,
+                             &test_adc_with_overflow, &env);
+    });
 }

@@ -2,3 +2,5 @@ build
 *~*
 *.swap*
 .idea/
+bin/
+lib/

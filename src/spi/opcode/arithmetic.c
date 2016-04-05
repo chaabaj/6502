@@ -23,7 +23,6 @@
  */
 
 #include "spi/opcode/arithmetic.h"
-#include "spi/debug.h"
 
 void    spi_adc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     spi_byte_t byte = spi_cpu_read_value(cpu, mode, mem);

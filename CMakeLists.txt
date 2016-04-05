@@ -15,5 +15,6 @@ include_directories(include)
 
 add_library(spi_6502 SHARED ${SRCS} ${HEADERS})
 add_subdirectory(tests)
+add_subdirectory(debugger)
 
-TARGET_LINK_LIBRARIES(spi_6502)
+target_link_libraries(spi_6502)

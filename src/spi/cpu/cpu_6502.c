@@ -34,10 +34,10 @@ spi_mem_addr_t  spi_cpu_get_addr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_by
         case RELATIVE : return mem[cpu->pc];
         case ABSOLUTE : return SPI_TO_UINT16(mem[cpu->pc + 1], mem[cpu->pc]);
         case ABSOLUTE_INDEXED_X : {
-            return (spi_mem_addr_t)((SPI_TO_UINT16(mem[cpu->pc + 1], (mem[cpu->pc] + cpu->registers[X]))) & 0xFFFF);
+            return (spi_mem_addr_t)((SPI_TO_UINT16(mem[cpu->pc + 1], mem[cpu->pc]) + cpu->registers[X]));
         }
         case ABSOLUTE_INDEXED_Y : {
-            return (spi_mem_addr_t)((SPI_TO_UINT16(mem[cpu->pc + 1], (mem[cpu->pc] + cpu->registers[Y]))) & 0xFFFF);
+            return (spi_mem_addr_t)((SPI_TO_UINT16(mem[cpu->pc + 1], mem[cpu->pc])) + cpu->registers[Y]);
         }
         case ZERO_PAGE : return mem[cpu->pc];
         case ZERO_PAGE_INDEXED_X : return (uint16_t)((mem[cpu->pc] + cpu->registers[X]) & 0xFF);

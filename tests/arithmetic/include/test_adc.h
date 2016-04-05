@@ -27,6 +27,8 @@
 
 # include "spi/cpu/cpu_6502.h"
 
+# define TEST_MEM_SIZE 0xFFFF
+
 void spi_run_test_adc(spi_cpu_t *cpu, spi_byte_t *mem);
 
 #endif //SPI_6502_TEST_ADC_H

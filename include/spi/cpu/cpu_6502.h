@@ -52,7 +52,7 @@
 /*
  * Converting 8 bits number into bcd number
  */
-# define SPI_BCD(x) ((x >> 4) + (x & 0xFFFF))
+# define SPI_BCD(x) ((x >> 4) + (x & 0x00FF))
 
 /*
  * Macro for declaring and getting instruction alias

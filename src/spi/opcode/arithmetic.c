@@ -29,8 +29,9 @@ void    spi_adc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     spi_byte_t byte = spi_cpu_read_value(cpu, mode, mem);
     int result = cpu->registers[A] + byte + SPI_GET_FLAG(cpu->flags, CARRY);
 
-    SPI_ENABLE_FLAG_IF(cpu->flags, OVERFLOW, result > 255)
-    SPI_ENABLE_FLAG_IF(cpu->flags, NEGATIVE, (int8_t)(result) < 0)
+    SPI_ENABLE_FLAG_IF(cpu->flags, OVERFLOW,
+                       SPI_GET_BIT(result, 7) != SPI_GET_BIT(cpu->registers[A], 7));
+    SPI_ENABLE_FLAG_IF(cpu->flags, NEGATIVE, SPI_GET_BIT(result, 7));
     SPI_ENABLE_FLAG_IF(cpu->flags, ZERO, result == 0)
     if (SPI_GET_FLAG(cpu->flags, DECIMAL)) {
         result = SPI_BCD(cpu->registers[A]) + SPI_BCD(byte) + SPI_GET_FLAG(cpu->flags, CARRY);

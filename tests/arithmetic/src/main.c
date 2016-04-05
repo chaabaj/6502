@@ -25,9 +25,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "spi/cpu/cpu_6502.h"
+#include "constants.h"
 #include "test_adc.h"
 
-#define MEM_SIZE 64 * 1024
 
 static spi_program_config_t prg_16k() {
     spi_program_config_t    cfg;

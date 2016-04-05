@@ -22,32 +22,9 @@
  * SOFTWARE.
  */
 
-#ifndef SPI_TEST_INSTRUCTION_H
-# define SPI_TEST_INSTRUCTION_H
+#ifndef SPI_TEST_ARITHMETIC_CONSTANTS_H
+# define SPI_TEST_ARITHMETIC_CONSTANTS_H
 
-# include "spi/cpu/cpu_6502.h"
+# define MEM_SIZE 0xFFFF
 
-# define SPI_UNIT_TEST(cpu, mem, size, body) {  \
-    spi_test_env_t  env;                        \
-                                                \
-    env.cpu = *cpu;                             \
-    env.mem = mem;                              \
-    env.mem_size = size;                        \
-    body                                        \
-}
-
-struct spi_test_env_s {
-    spi_cpu_t   cpu;
-    spi_byte_t  *mem;
-    size_t      mem_size;
-};
-
-typedef struct spi_test_env_s spi_test_env_t;
-
-typedef void (*spi_test_fn_t)(spi_cpu_t *cpu, spi_byte_t *mem);
-
-void spi_test_instruction(const spi_byte_t *opcodes,  const uint16_t value,
-                          size_t nb_opcodes, spi_test_fn_t fn,
-                          const spi_test_env_t *env);
-
-#endif //SPI_6502_TEST_INSTRUCTION_H
+#endif //SPI_TEST_ARITHMETIC_CONSTANTS_H

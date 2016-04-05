@@ -22,29 +22,29 @@
  * SOFTWARE.
  */
 
-# include "tools/instruction.h"
+#include <stdlib.h>
+#include <string.h>
+#include "tools/instruction.h"
 
-void spi_test_init_registers(spi_cpu_t *cpu, spi_byte_t va,
-                             spi_byte_t vx, spi_byte_t vy) {
-    cpu->registers[A] = va;
-    cpu->registers[X] = vx;
-    cpu->registers[Y] = vy;
-}
-
-void spi_test_instruction(const spi_byte_t *opcodes, const uint16_t *values,
+void spi_test_instruction(const spi_byte_t *opcodes,  const uint16_t value,
                           size_t nb_opcodes, spi_test_fn_t fn,
-                          spi_cpu_t *cpu, spi_byte_t *mem) {
+                          const spi_test_env_t *env) {
+    spi_cpu_t   current_cpu;
+    spi_byte_t  *cpy_mem;
 
+    cpy_mem = malloc(sizeof(*cpy_mem) * env->mem_size);
+    if (cpy_mem == NULL) {
+        puts("Cannot allocate a copy memory for test");
+        exit(EXIT_FAILURE);
+    }
     for (size_t i = 0; i < nb_opcodes; ++i) {
-        cpu->flags = 0;
-        cpu->pc = 0xC000;
-        cpu->sp = 0xFF;
-        SPI_ENABLE_FLAG(cpu->flags, DISABLE_INTERRUPTS);
-        mem[0xC000] = opcodes[i];
-        mem[0xC001] = (spi_byte_t)(values[i] & 0xFF);
-        mem[0xC002] = (spi_byte_t)(values[i] >> 8);
-        spi_cpu_execute(cpu, mem);
-        (*fn)(cpu, mem);
+        memcpy(cpy_mem, env->mem, env->mem_size);
+        current_cpu = env->cpu;
+        cpy_mem[0xC000] = opcodes[i];
+        cpy_mem[0xC001] = (spi_byte_t)(value & 0xFF);
+        cpy_mem[0xC002] = (spi_byte_t)(value >> 8);
+        spi_cpu_execute(&current_cpu, cpy_mem);
+        (*fn)(&current_cpu, cpy_mem);
     }
 
 }

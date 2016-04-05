@@ -46,5 +46,6 @@ void spi_test_instruction(const spi_byte_t *opcodes,  const uint16_t value,
         spi_cpu_execute(&current_cpu, cpy_mem);
         (*fn)(&current_cpu, cpy_mem);
     }
+    free(cpy_mem);
 
 }

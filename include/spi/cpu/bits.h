@@ -35,4 +35,5 @@
         SPI_DISABLE_BIT(bitset, index);             \
     }
 
+
 #endif //SPI_BITS_H

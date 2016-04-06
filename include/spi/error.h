@@ -30,6 +30,14 @@
 # define SPI_CANNOT_READ_FILE 3
 # define SPI_NB_DEFINED_ERRORS 4
 
-void    spi_print_error(int error);
+# ifdef __cplusplus
+extern "C" {
+# endif
+
+void spi_print_error(int error);
+
+# ifdef __cplusplus
+ }
+# endif
 
 #endif // SPI_ERROR_H

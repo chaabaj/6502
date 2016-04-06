@@ -22,26 +22,11 @@
  * SOFTWARE.
  */
 
-#ifndef SPI_DEBUG_H
-# define SPI_DEBUG_H
+#ifndef SPI_6502_DEBUGGER_COMMAND_HPP
+# define SPI_6502_DEBUGGER_COMMAND_HPP
 
-# include <stdio.h>
-# include <stdint.h>
-# include "spi/cpu/types.h"
+namespace lol {
 
-# define PRINT_DEBUG(msg, ...) printf("In %s at line %d : ", __FILE__, __LINE__); \
-    printf(msg, __VA_ARGS__); \
-    puts("\n");
+}
 
-# ifdef __cplusplus
-extern "C" {
-# endif
-
-void spi_dump_memory(uint8_t *memory, size_t len,
-                     spi_mem_addr_t start, spi_mem_addr_t end);
-
-# ifdef __cplusplus
- }
-# endif
-
-#endif //SPI_DEBUG_H
+#endif //SPI_6502_DEBUGGER_COMMAND_HPP

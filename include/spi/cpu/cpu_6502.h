@@ -74,6 +74,10 @@
         return nb_cycle;                \
     }
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 enum spi_cpu_register_e {
     X,
     Y,
@@ -176,5 +180,10 @@ void spi_cpu_write_value(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *me
 void spi_cpu_push_stack(spi_cpu_t *cpu, spi_byte_t *mem, spi_byte_t value);
 
 spi_byte_t spi_cpu_pull_stack(spi_cpu_t *cpu, spi_byte_t *mem);
+
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif //SPI_CPU_6502_H

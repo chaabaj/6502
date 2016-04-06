@@ -27,21 +27,42 @@
 
 # include "spi/cpu/cpu_6502.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 void spi_clc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_cld(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_cli(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_clv(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_nop(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_sec(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_sed(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_sei(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_tax(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_tay(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_tsx(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_txa(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_txs(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+
 void spi_tya(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
 void spi_register_cpu_opcodes(spi_cpu_t *cpu);
+
+# ifdef __cplusplus
+ }
+# endif
 
 #endif //SPI_OPCODE_CPU_H

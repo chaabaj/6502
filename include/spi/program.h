@@ -28,11 +28,15 @@
 # include <stddef.h>
 # include "spi/cpu/types.h"
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 struct spi_program_config_s {
-    size_t          prg_size;
-    spi_mem_addr_t  reset_vector_offset;
-    spi_mem_addr_t  stack_addr;
-    spi_mem_addr_t  load_addr;
+    size_t prg_size;
+    spi_mem_addr_t reset_vector_offset;
+    spi_mem_addr_t stack_addr;
+    spi_mem_addr_t load_addr;
 };
 
 typedef struct spi_program_config_s spi_program_config_t;
@@ -42,6 +46,7 @@ enum spi_program_flags_e {
 };
 
 typedef enum spi_program_flags_e spi_program_flags_t;
+
 /*
  * Load a 6502 program
  * You must specify a program configuration to tell where to put the program
@@ -51,5 +56,9 @@ int spi_load_program(const char *file,
                      spi_byte_t *mem,
                      const spi_program_config_t *config,
                      int flags);
+
+# ifdef __cplusplus
+ }
+# endif
 
 #endif //SPI_PROGRAM_H

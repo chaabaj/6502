@@ -34,6 +34,14 @@
 # include "spi/opcode/memory.h"
 # include "spi/opcode/stack.h"
 
-void    spi_register_opcodes(spi_cpu_t *cpu);
+# ifdef __cplusplus
+extern "C" {
+# endif
+
+void spi_register_opcodes(spi_cpu_t *cpu);
+
+# ifdef __cplusplus
+ }
+# endif
 
 #endif //SPI_OPCODE_OPCODE_H

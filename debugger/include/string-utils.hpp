@@ -22,51 +22,12 @@
  * SOFTWARE.
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include "shell.hpp"
-#include "spi/program.h"
-#include "spi/error.h"
+#ifndef SPI_6502_DEBUGGER_STRINGUTILS_HPP
+# define SPI_6502_DEBUGGER_STRINGUTILS_HPP
 
-#define MEM_SIZE 0xFFFF
+# include <vector>
+# include <string>
 
-static spi_program_config_t prg_16k() {
-    spi_program_config_t    cfg;
+std::vector<std::string> tokenize(std::string const &str);
 
-    cfg.load_addr = 0xC000;
-    cfg.prg_size = 16 * 1024;
-    cfg.reset_vector_offset = 0xFFFC;
-    cfg.stack_addr = 0x100;
-    return cfg;
-}
-
-static void print_usage() {
-    puts("./6502_debugger <binary>");
-}
-
-static void start_shell(spi_cpu_t &cpu, spi_byte_t *mem) {
-    Shell   shell(cpu, mem);
-
-    shell.run();
-}
-
-int main(int ac, char **av) {
-    spi_byte_t                  memory[MEM_SIZE];
-    spi_cpu_t                   cpu;
-    const spi_program_config_t  cfg = prg_16k();
-    int                         err;
-
-    if (ac > 1) {
-        bzero(memory, MEM_SIZE);
-        if ((err = spi_load_program(av[1], memory, &cfg, IGNORE_PRG_SIZE))) {
-            spi_print_error(err);
-            return EXIT_FAILURE;
-        }
-        spi_cpu_init(&cpu, 20, MHZ);
-        spi_cpu_reset(&cpu, memory, &cfg);
-        start_shell(cpu, memory);
-    } else {
-        print_usage();
-    }
-    return 0;
-}
+#endif

@@ -22,11 +22,40 @@
  * SOFTWARE.
  */
 
-#ifndef SPI_6502_DEBUGGER_COMMAND_HPP
-# define SPI_6502_DEBUGGER_COMMAND_HPP
+#ifndef SPI_6502_DEBUGGER_SHELL_HPP
+# define SPI_6502_DEBUGGER_SHELL_HPP
 
-namespace lol {
+# include <functional>
+# include <string>
+# include <map>
+# include <vector>
+# include "spi/cpu/cpu_6502.h"
 
-}
+class Shell {
+    private:
+        typedef std::vector<std::string>                ArgsType;
+        typedef std::function<void (ArgsType const &)>  CommandType;
+        typedef std::map<std::string, CommandType>      CommandMapType;
 
-#endif //SPI_6502_DEBUGGER_COMMAND_HPP
+        void execute(std::string const &str);
+
+    public:
+        Shell(spi_cpu_t &cpu, spi_byte_t *mem);
+        ~Shell() {}
+
+        void run();
+        void read_registers(ArgsType const &args);
+        void write_register(ArgsType const &args);
+        void read_memory(ArgsType const &args);
+        void write_memory(ArgsType const &args);
+        void read_cpu_state(ArgsType const &args);
+        void next_instruction(ArgsType const &args);
+
+    private:
+        CommandMapType  _commands;
+        spi_cpu_t       &_cpu;
+        spi_byte_t      *_mem;
+        bool            _running;
+};
+
+#endif //SPI_6502_DEBUGGER_SHELL_H

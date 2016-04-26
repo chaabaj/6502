@@ -6,7 +6,7 @@ file(GLOB_RECURSE SRCS "src/*.cpp")
 file(GLOB_RECURSE HEADERS "include/*.hpp")
 
 if (UNIX OR APPLE)
-    set(CMAKE_CPP_FLAGS "-ggdb -std=c++14 -Wall")
+    set(CMAKE_CXX_FLAGS "-ggdb -std=c++14 -Wall")
 endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../../bin)

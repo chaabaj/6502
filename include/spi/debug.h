@@ -28,6 +28,7 @@
 # include <stdio.h>
 # include <stdint.h>
 # include "spi/cpu/types.h"
+# include "spi/dll_export.h"
 
 # define PRINT_DEBUG(msg, ...) printf("In %s at line %d : ", __FILE__, __LINE__); \
     printf(msg, __VA_ARGS__); \
@@ -37,8 +38,8 @@
 extern "C" {
 # endif
 
-void spi_dump_memory(uint8_t *memory, size_t len,
-                     spi_mem_addr_t start, spi_mem_addr_t end);
+DLL_EXPORT void spi_dump_memory(uint8_t *memory, size_t len,
+                                spi_mem_addr_t start, spi_mem_addr_t end);
 
 # ifdef __cplusplus
  }

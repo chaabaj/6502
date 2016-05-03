@@ -22,24 +22,14 @@
  * SOFTWARE.
  */
 
-#ifndef SPI_ERROR_H
-# define SPI_ERROR_H
 
-# include "spi/dll_export.h"
+#ifndef SPI_6502_DLL_EXPORT_H
+# define SPI_6502_DLL_EXPORT_H
 
-# define SPI_FILE_NOT_FOUND 1
-# define SPI_INVALID_ROM_SIZE 2
-# define SPI_CANNOT_READ_FILE 3
-# define SPI_NB_DEFINED_ERRORS 4
-
-# ifdef __cplusplus
-extern "C" {
+# ifdef WIN32
+#  define DLL_EXPORT__declspec(dllexport)
+# else
+#  define DLL_EXPORT
 # endif
 
-DLL_EXPORT void spi_print_error(int error);
-
-# ifdef __cplusplus
- }
-# endif
-
-#endif // SPI_ERROR_H
+#endif //SPI_6502_EXPORT_DLL_H

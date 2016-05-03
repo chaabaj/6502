@@ -33,12 +33,13 @@
 # include "spi/opcode/bitwise.h"
 # include "spi/opcode/memory.h"
 # include "spi/opcode/stack.h"
+# include "spi/dll_export.h"
 
 # ifdef __cplusplus
 extern "C" {
 # endif
 
-void spi_register_opcodes(spi_cpu_t *cpu);
+DLL_EXPORT void spi_register_opcodes(spi_cpu_t *cpu);
 
 # ifdef __cplusplus
  }

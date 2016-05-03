@@ -26,31 +26,31 @@
 # define SPI_OPCODE_ARITHMETIC_H
 
 # include "spi/cpu/cpu_6502.h"
-
+# include "spi/dll_export.h"
 
 # ifdef __cplusplus
 extern "C" {
 # endif
 
-void spi_adc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_adc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_asl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_asl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_dec(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_dec(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_dex(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_dex(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_dey(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_dey(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_inc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_inc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_inx(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_inx(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_iny(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_iny(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_sbc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_sbc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_register_arithmetic_opcodes(spi_cpu_t *cpu);
+DLL_EXPORT void spi_register_arithmetic_opcodes(spi_cpu_t *cpu);
 
 
 # ifdef __cplusplus

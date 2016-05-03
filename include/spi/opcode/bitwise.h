@@ -26,27 +26,27 @@
 # define SPI_OPCODE_BITWISE_H
 
 # include "spi/cpu/cpu_6502.h"
+# include "spi/dll_export.h"
 
 # ifdef __cplusplus
 extern "C" {
 # endif
 
-void spi_bit(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_bit(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_and(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_and(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_eor(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_eor(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_lsr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_lsr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_ora(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_ora(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_rol(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_rol(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_ror(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_ror(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_register_bitwise_opcodes(spi_cpu_t *cpu);
-
+DLL_EXPORT void spi_register_bitwise_opcodes(spi_cpu_t *cpu);
 
 # ifdef __cplusplus
  }

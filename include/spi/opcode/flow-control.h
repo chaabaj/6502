@@ -26,6 +26,7 @@
 # define SPI_OPCODE_FLOW_CONTROL_H
 
 # include "spi/cpu/cpu_6502.h"
+# include "spi/dll_export.h"
 
 # define SPI_OPCODE_CONDITIONAL_BRANCH(name, condition) \
     void name(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {   \
@@ -42,31 +43,31 @@
 extern "C" {
 # endif
 
-void spi_bcs(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_bcs(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_bcc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_bcc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_beq(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_beq(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_bmi(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_bmi(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_bne(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_bne(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_bpl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_bpl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_bvc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_bvc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_bvs(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_bvs(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_jmp(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_jmp(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_jsr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_jsr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_rti(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_rti(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_rts(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_rts(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_register_flow_control_opcodes(spi_cpu_t *cpu);
+DLL_EXPORT void spi_register_flow_control_opcodes(spi_cpu_t *cpu);
 
 # ifdef __cplusplus
  }

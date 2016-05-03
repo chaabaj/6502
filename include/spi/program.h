@@ -27,6 +27,7 @@
 
 # include <stddef.h>
 # include "spi/cpu/types.h"
+# include "spi/dll_export.h"
 
 # ifdef __cplusplus
 extern "C" {
@@ -52,10 +53,10 @@ typedef enum spi_program_flags_e spi_program_flags_t;
  * You must specify a program configuration to tell where to put the program
  * and tell the cpu where is the reset vector
  */
-int spi_load_program(const char *file,
-                     spi_byte_t *mem,
-                     const spi_program_config_t *config,
-                     int flags);
+DLL_EXPORT int spi_load_program(const char *file,
+                                spi_byte_t *mem,
+                                const spi_program_config_t *config,
+                                int flags);
 
 # ifdef __cplusplus
  }

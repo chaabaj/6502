@@ -26,24 +26,25 @@
 # define SPI_OPCODE_MEMORY_H
 
 # include "spi/cpu/cpu_6502.h"
+# include "spi/dll_export.h"
 
 # ifdef __cplusplus
 extern "C" {
 # endif
 
-void spi_lda(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_lda(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_ldx(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_ldx(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_ldy(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_ldy(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_sta(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_sta(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_stx(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_stx(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_sty(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT void spi_sty(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
-void spi_register_memory_opcodes(spi_cpu_t *cpu);
+DLL_EXPORT void spi_register_memory_opcodes(spi_cpu_t *cpu);
 
 # ifdef __cplusplus
  }

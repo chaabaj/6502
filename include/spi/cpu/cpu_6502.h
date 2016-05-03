@@ -30,6 +30,7 @@
 # include "spi/cpu/bits.h"
 # include "spi/program.h"
 # include "spi/debug.h"
+# include "spi/dll_export.h"
 
 # define SPI_NB_OPCODE 256
 # define SPI_NB_REGISTER 3
@@ -142,7 +143,7 @@ typedef struct spi_cpu_s spi_cpu_t;
  * Initialize the cpu
  * reset registers and set the processor speed
  */
-void spi_cpu_init(spi_cpu_t *cpu, double speed, spi_clock_speed_unit_t unit);
+DLL_EXPORT void spi_cpu_init(spi_cpu_t *cpu, double speed, spi_clock_speed_unit_t unit);
 
 /*
  * Reset the cpu
@@ -150,35 +151,35 @@ void spi_cpu_init(spi_cpu_t *cpu, double speed, spi_clock_speed_unit_t unit);
  * 6502 processor read the reset vector table in memory to know where the program start
  * The reset vector table is located at 0xFFFD and 0xFFFC
  */
-void spi_cpu_reset(spi_cpu_t *cpu, spi_byte_t *byte, const spi_program_config_t *cfg);
+DLL_EXPORT void spi_cpu_reset(spi_cpu_t *cpu, spi_byte_t *byte, const spi_program_config_t *cfg);
 
 /**
  * Execute the next opcode
  */
-void spi_cpu_execute(spi_cpu_t *cpu, spi_byte_t *mem);
+DLL_EXPORT void spi_cpu_execute(spi_cpu_t *cpu, spi_byte_t *mem);
 
 /**
  * Get memory address using addressing mode
  */
-spi_mem_addr_t  spi_cpu_get_addr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT spi_mem_addr_t  spi_cpu_get_addr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
 /*
  * Read value from memory
  * The addressing mode tell how to calculate the address
  * Please read 6502 addressing mode for more information
  */
-spi_byte_t spi_cpu_read_value(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
+DLL_EXPORT spi_byte_t spi_cpu_read_value(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem);
 
 /*
  * Write value to memory
  * The addressing mode tell how to calculate the address
  * Please read 6502 addressing mode for more information
  */
-void spi_cpu_write_value(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem, spi_byte_t value);
+DLL_EXPORT void spi_cpu_write_value(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem, spi_byte_t value);
 
-void spi_cpu_push_stack(spi_cpu_t *cpu, spi_byte_t *mem, spi_byte_t value);
+DLL_EXPORT void spi_cpu_push_stack(spi_cpu_t *cpu, spi_byte_t *mem, spi_byte_t value);
 
-spi_byte_t spi_cpu_pull_stack(spi_cpu_t *cpu, spi_byte_t *mem);
+DLL_EXPORT spi_byte_t spi_cpu_pull_stack(spi_cpu_t *cpu, spi_byte_t *mem);
 
 
 # ifdef __cplusplus

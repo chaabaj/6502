@@ -50,6 +50,8 @@ class Shell {
         void write_memory(ArgsType const &args);
         void read_cpu_state(ArgsType const &args);
         void next_instruction(ArgsType const &args);
+        void eval(ArgsType const &args);
+        void current_opcode(ArgsType const &args);
 
     private:
         CommandMapType  _commands;

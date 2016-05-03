@@ -63,7 +63,6 @@
 # define SPI_GET_INSTRUCTION_ALIAS(name, address_mode) name##address_mode
 # define SPI_INSTRUCTION_ALIAS(name, address_mode, size, nb_cycle) \
     static int32_t SPI_GET_INSTRUCTION_ALIAS(name, address_mode)(spi_cpu_t *cpu, spi_byte_t *mem) { \
-        PRINT_DEBUG("Instruction executed is : %s", #name) \
         ++cpu->pc;                      \
         name(cpu, address_mode, mem);   \
         if (cpu->jmp_occured) {         \

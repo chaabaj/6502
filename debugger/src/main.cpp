@@ -24,6 +24,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <array>
 #include "shell.hpp"
 #include "spi/program.h"
 #include "spi/error.h"
@@ -38,10 +39,6 @@ static spi_program_config_t prg_16k() {
     cfg.reset_vector_offset = 0xFFFC;
     cfg.stack_addr = 0x100;
     return cfg;
-}
-
-static void print_usage() {
-    puts("./6502_debugger <binary>");
 }
 
 static void start_shell(spi_cpu_t &cpu, spi_byte_t *mem) {
@@ -62,11 +59,9 @@ int main(int ac, char **av) {
             spi_print_error(err);
             return EXIT_FAILURE;
         }
-        spi_cpu_init(&cpu, 20, MHZ);
-        spi_cpu_reset(&cpu, memory, &cfg);
-        start_shell(cpu, memory);
-    } else {
-        print_usage();
     }
+    spi_cpu_init(&cpu, 20, MHZ);
+    spi_cpu_reset(&cpu, memory, &cfg);
+    start_shell(cpu, memory);
     return 0;
 }

@@ -36,6 +36,9 @@ Shell::Shell(spi_cpu_t &cpu, spi_byte_t *mem) : _cpu(cpu), _mem(mem) {
     _commands["mem_write"] = std::bind(&Shell::write_memory, this, _1);
     _commands["cpu_state"] = std::bind(&Shell::read_cpu_state, this, _1);
     _commands["next"] = std::bind(&Shell::next_instruction, this, _1);
+    _commands["eval"] = std::bind(&Shell::eval, this, _1);
+    _commands["cur_op"] = std::bind(&Shell::current_opcode, this, _1);
+
 }
 
 void Shell::execute(std::string const &str) {
@@ -104,9 +107,24 @@ void Shell::write_memory(ArgsType const &args) {
 }
 
 void Shell::read_cpu_state(ArgsType const &args) {
+    int flags[8];
+
+    flags[ZERO] = SPI_GET_FLAG(_cpu.flags, ZERO);
+    flags[NEGATIVE] = SPI_GET_FLAG(_cpu.flags, NEGATIVE);
+    flags[BRK_EXECUTED] = SPI_GET_FLAG(_cpu.flags, BRK_EXECUTED);
+    flags[OVERFLOW] = SPI_GET_FLAG(_cpu.flags, OVERFLOW);
+    flags[DECIMAL] = SPI_GET_FLAG(_cpu.flags, DECIMAL);
+    flags[DISABLE_INTERRUPTS] = SPI_GET_FLAG(_cpu.flags, DISABLE_INTERRUPTS);
+    flags[CARRY] = SPI_GET_FLAG(_cpu.flags, CARRY);
     std::cout << "CPU State:" << std::endl
               << "PC=" << _cpu.pc << std::endl
-              << "Flags=" << std::bitset<8>(_cpu.flags) << std::endl
+              << "Negative flag=" << flags[NEGATIVE] << std::endl
+              << "Overflow flag=" << flags[OVERFLOW] << std::endl
+              << "Break flag=" << flags[BRK_EXECUTED] << std::endl
+              << "Interrupt flag=" << flags[DISABLE_INTERRUPTS] << std::endl
+              << "Decimal flag=" << flags[DECIMAL] << std::endl
+              << "Zero flag=" << flags[ZERO] << std::endl
+              << "Carry flag=" << flags[CARRY] << std::endl
               << "SP=" << static_cast<uint16_t>(_cpu.sp) << std::endl
               << "Available cycles=" << _cpu.available_cycles << std::endl
               << "Total cycles=" << _cpu.total_cycles << std::endl;
@@ -114,6 +132,28 @@ void Shell::read_cpu_state(ArgsType const &args) {
 
 void Shell::next_instruction(ArgsType const &args) {
     spi_cpu_execute(&_cpu, _mem);
+}
+
+void Shell::current_opcode(ArgsType const &args) {
+    std::cout << "Current opcode="
+              << static_cast<uint16_t>(_mem[_cpu.pc])
+              << std::endl;
+}
+
+void Shell::eval(ArgsType const &args) {
+    spi_mem_addr_t save_pc = _cpu.pc;
+    spi_byte_t save_mem[3];
+
+    for (int i = 0; i < args.size() - 1 && i < 3; ++i) {
+        save_mem[i] = _mem[i];
+        _mem[i] = static_cast<spi_byte_t >(std::stoi(args[i + 1], 0, 0));
+    }
+    _cpu.pc = 0x0000;
+    spi_cpu_execute(&_cpu, _mem);
+    _cpu.pc = save_pc;
+    for (int i = 0; i < 3 && i < args.size() - 1; ++i) {
+        _mem[i] = save_mem[i];
+    }
 }
 
 void Shell::run() {
@@ -125,6 +165,8 @@ void Shell::run() {
 
         std::cout << "shell>" << std::flush;
         std::getline(std::cin, line);
-        this->execute(line);
+        if (line.size() > 0) {
+            this->execute(line);
+        }
     }
 }

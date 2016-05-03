@@ -28,15 +28,15 @@ void    spi_adc(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     spi_byte_t byte = spi_cpu_read_value(cpu, mode, mem);
     int result = cpu->registers[A] + byte + SPI_GET_FLAG(cpu->flags, CARRY);
 
-    SPI_ENABLE_FLAG_IF(cpu->flags, OVERFLOW,
+    SPI_SET_FLAGS(cpu->flags, OVERFLOW,
                        SPI_GET_BIT(result, 7) != SPI_GET_BIT(cpu->registers[A], 7));
-    SPI_ENABLE_FLAG_IF(cpu->flags, NEGATIVE, SPI_GET_BIT(result, 7));
-    SPI_ENABLE_FLAG_IF(cpu->flags, ZERO, result == 0)
+    SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(result, 7));
+    SPI_SET_FLAGS(cpu->flags, ZERO, result == 0)
     if (SPI_GET_FLAG(cpu->flags, DECIMAL)) {
         result = SPI_BCD(cpu->registers[A]) + SPI_BCD(byte) + SPI_GET_FLAG(cpu->flags, CARRY);
-        SPI_ENABLE_FLAG_IF(cpu->flags, CARRY, result > 99)
+        SPI_SET_FLAGS(cpu->flags, CARRY, result > 99)
     } else {
-        SPI_ENABLE_FLAG_IF(cpu->flags, CARRY, result > 255)
+        SPI_SET_FLAGS(cpu->flags, CARRY, result > 255)
     }
     cpu->registers[A] = (spi_byte_t)result;
 }
@@ -54,7 +54,7 @@ void spi_asl(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     SPI_SET_FLAGS(cpu->flags, CARRY, SPI_GET_BIT(value, 7));
     value = (uint8_t)((value << 1) & 0xFE);
     SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(value, 7));
-    SPI_SET_FLAGS(cpu->flags, ZERO, value == 0 ? 1 : 0);
+    SPI_SET_FLAGS(cpu->flags, ZERO, value == 0);
     if (mode == ACCUMULATOR) {
         cpu->registers[A] = value;
     } else {

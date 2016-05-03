@@ -71,7 +71,6 @@ void    spi_cpu_write_value(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t 
 }
 
 void    spi_cpu_init(spi_cpu_t *cpu, double speed, enum spi_clock_speed_unit_e unit) {
-    PRINT_DEBUG("INITIALIZE CPU", "");
     cpu->flags = 0;
     bzero(cpu->registers, SPI_NB_OPCODE);
     bzero(cpu->opcode_table, 0);
@@ -81,14 +80,12 @@ void    spi_cpu_init(spi_cpu_t *cpu, double speed, enum spi_clock_speed_unit_e u
 }
 
 void    spi_cpu_reset(spi_cpu_t *cpu, spi_byte_t *mem, const spi_program_config_t *cfg) {
-    PRINT_DEBUG("RESET CPU", "");
     spi_mem_addr_t prog_start_addr = SPI_TO_UINT16(mem[cfg->reset_vector_offset + 1], mem[cfg->reset_vector_offset]);
 
     if (prog_start_addr == 0) {
         prog_start_addr = cfg->load_addr;
     }
     cpu->pc = prog_start_addr;
-    printf("PC iIS INITIALIZED AT : %X\n", cpu->pc);
     cpu->sp = 0xFF;
     cpu->stack_addr = cfg->stack_addr;
     SPI_ENABLE_FLAG(cpu->flags, DISABLE_INTERRUPTS);
@@ -97,10 +94,7 @@ void    spi_cpu_reset(spi_cpu_t *cpu, spi_byte_t *mem, const spi_program_config_
 void    spi_cpu_execute(spi_cpu_t *cpu, spi_byte_t *mem) {
     spi_byte_t  opcode = (spi_byte_t)mem[cpu->pc];
 
-    PRINT_DEBUG("CURRENT PROGRAM COUNTER : %X", cpu->pc);
-    PRINT_DEBUG("SEARCH OPCODE : %X", opcode);
-    if (cpu->opcode_table[opcode]) {
-        PRINT_DEBUG("EXECUTE OPCODE : %X", opcode);
+    if (cpu->opcode_table[opcode]) { ;
         cpu->opcode_table[opcode](cpu, mem);
     }
 }

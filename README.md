@@ -14,9 +14,10 @@ It's also beginning step for other emulator i want to write that are based in 65
 
 The 6502 cpu emulator will be purpose as a shared library for reuse purpose in other emulator
 
-Usage : 
+Debugger usage:
+
 ```sh
-./6502 binary
+./6502_debugger <binary>
 ```
 
 You can use this assembler to compile your own program : https://hkn.eecs.berkeley.edu/~mcmartin/P65/ophis-ref.html

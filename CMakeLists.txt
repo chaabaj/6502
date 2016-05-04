@@ -9,6 +9,8 @@ if (UNIX OR APPLE)
     add_definitions("-Wall -ggdb")
 endif()
 
+set(CMAKE_C_FLAGS "-std=c99")
+
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ../lib)
 
 include_directories(include)

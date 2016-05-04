@@ -94,9 +94,9 @@ SPI_INSTRUCTION_ALIAS(spi_rts, IMPLIED, 1, 6);
 void    spi_register_flow_control_opcodes(spi_cpu_t *cpu) {
     cpu->opcode_table[0x90] = &SPI_GET_INSTRUCTION_ALIAS(spi_bcc, RELATIVE);
 
-    cpu->opcode_table[0xF0] = &SPI_GET_INSTRUCTION_ALIAS(spi_bcs, RELATIVE);
+    cpu->opcode_table[0xB0] = &SPI_GET_INSTRUCTION_ALIAS(spi_bcs, RELATIVE);
 
-    cpu->opcode_table[0xB0] = &SPI_GET_INSTRUCTION_ALIAS(spi_beq, RELATIVE);
+    cpu->opcode_table[0xF0] = &SPI_GET_INSTRUCTION_ALIAS(spi_beq, RELATIVE);
 
     cpu->opcode_table[0x30] = &SPI_GET_INSTRUCTION_ALIAS(spi_bmi, RELATIVE);
 

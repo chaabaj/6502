@@ -39,12 +39,9 @@ void spi_and(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     spi_byte_t byte = spi_cpu_read_value(cpu, mode, mem);
     spi_byte_t result = cpu->registers[A] & byte;
 
-    PRINT_DEBUG("VALUE : %d", byte);
     SPI_SET_FLAGS(cpu->flags, NEGATIVE, (int8_t)(result) < 0);
     SPI_SET_FLAGS(cpu->flags, ZERO, result == 0);
     cpu->registers[A] = (spi_byte_t)result;
-    PRINT_DEBUG("PROCESSOR STATUS : %X", cpu->flags);
-    PRINT_DEBUG("ACCUMULATOR VALUE : %d", (spi_byte_t)result);
 }
 
 void spi_eor(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {

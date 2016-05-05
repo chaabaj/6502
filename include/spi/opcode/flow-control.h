@@ -30,12 +30,11 @@
 
 # define SPI_OPCODE_CONDITIONAL_BRANCH(name, condition) \
     void name(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {   \
-        int8_t  rel_addr = spi_cpu_read_value(cpu, mode, mem);              \
+        int8_t  rel_addr = spi_cpu_get_addr(cpu, mode, mem);                \
                                                                             \
         if (condition) {                                                    \
-            PRINT_DEBUG("JUMP AT : %X", cpu->pc + rel_addr)                 \
             cpu->jmp_occured = 1;                                           \
-            cpu->pc += rel_addr;                                            \
+            cpu->pc += rel_addr + 1;                                        \
         }                                                                   \
     }
 

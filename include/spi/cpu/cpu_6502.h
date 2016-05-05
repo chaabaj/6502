@@ -65,6 +65,7 @@
 # define SPI_INSTRUCTION_ALIAS(name, address_mode, size, nb_cycle) \
     static int32_t SPI_GET_INSTRUCTION_ALIAS(name, address_mode)(spi_cpu_t *cpu, spi_byte_t *mem) { \
         ++cpu->pc;                      \
+        printf("Instruction: %s\n", #name);      \
         name(cpu, address_mode, mem);   \
         if (cpu->jmp_occured) {         \
             cpu->jmp_occured = 0;       \

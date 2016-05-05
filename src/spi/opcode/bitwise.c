@@ -33,7 +33,6 @@ void spi_bit(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
     SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(result, 7));
     SPI_SET_FLAGS(cpu->flags, OVERFLOW, SPI_GET_BIT(result, 6));
     SPI_SET_FLAGS(cpu->flags, ZERO, result == 0);
-    mem[addr] = result;
 }
 
 void spi_and(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {

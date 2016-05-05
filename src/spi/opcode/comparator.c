@@ -30,7 +30,7 @@ static void spi_compare_with_register(spi_cpu_register_t reg, spi_cpu_t *cpu,
     spi_byte_t result = cpu->registers[reg] - value;
 
     SPI_SET_FLAGS(cpu->flags, NEGATIVE, SPI_GET_BIT(result, 7));
-    SPI_SET_FLAGS(cpu->flags, CARRY, cpu->registers[reg] >= value);
+    SPI_SET_FLAGS(cpu->flags, CARRY, (int8_t)cpu->registers[reg] >= (int8_t)value);
     SPI_SET_FLAGS(cpu->flags, ZERO, result == 0);
 }
 

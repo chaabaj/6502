@@ -43,9 +43,9 @@ spi_mem_addr_t  spi_cpu_get_addr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_by
         case ZERO_PAGE_INDEXED_X : return (uint16_t)((mem[cpu->pc] + cpu->registers[X]) & 0xFF);
         case ZERO_PAGE_INDEXED_Y : return (uint16_t)((mem[cpu->pc] + cpu->registers[Y]) & 0xFF);
         case INDIRECT : {
-            spi_mem_addr_t zp_addr = mem[cpu->pc];
+            spi_mem_addr_t addr = SPI_TO_UINT16(mem[cpu->pc + 1], mem[cpu->pc]);
 
-            return SPI_TO_UINT16(mem[zp_addr + 1], mem[zp_addr]);
+            return SPI_TO_UINT16(mem[addr + 1], mem[addr]);
         }
         case INDEXED_INDIRECT : {
             spi_mem_addr_t zp_addr = mem[cpu->pc];
@@ -53,7 +53,9 @@ spi_mem_addr_t  spi_cpu_get_addr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_by
             return SPI_TO_UINT16((mem[zp_addr + cpu->registers[X] + 1]), (mem[zp_addr] + cpu->registers[X]));
         }
         case INDIRECT_INDEXED : {
-            return spi_cpu_get_addr(cpu, INDIRECT, mem) + cpu->registers[Y];
+            spi_mem_addr_t zp_addr = mem[cpu->pc];
+
+            return SPI_TO_UINT16(mem[zp_addr + 1], mem[zp_addr]) + cpu->registers[Y];
         }
         default: {
             // Other case have no sense to read a value in the memory

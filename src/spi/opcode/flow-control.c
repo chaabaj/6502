@@ -41,8 +41,8 @@ void    spi_jmp(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
 }
 
 void    spi_jsr(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
-    spi_cpu_push_stack(cpu, mem, (spi_byte_t )((cpu->pc + 1) >> 8));
-    spi_cpu_push_stack(cpu, mem, (spi_byte_t)((cpu->pc + 1) &0x00FF));
+    spi_cpu_push_stack(cpu, mem, (spi_byte_t )((cpu->pc + 2) >> 8));
+    spi_cpu_push_stack(cpu, mem, (spi_byte_t)((cpu->pc + 2) & 0x00FF));
     cpu->pc = spi_cpu_get_addr(cpu, mode, mem);
     cpu->jmp_occured = 1;
 }
@@ -63,7 +63,7 @@ void spi_rts(spi_cpu_t *cpu, spi_address_mode_t mode, spi_byte_t *mem) {
 
     l_addr = spi_cpu_pull_stack(cpu, mem);
     h_addr = spi_cpu_pull_stack(cpu, mem);
-    cpu->pc = (spi_mem_addr_t )(SPI_TO_UINT16(l_addr, h_addr) + 1);
+    cpu->pc = (spi_mem_addr_t )(SPI_TO_UINT16(h_addr, l_addr));
 }
 
 SPI_INSTRUCTION_ALIAS(spi_bcc, RELATIVE, 2, 2);

@@ -27,7 +27,9 @@
 # define SPI_6502_DLL_EXPORT_H
 
 # ifdef WIN32
-#  define DLL_EXPORT__declspec(dllexport)
+#  define DLL_EXPORT __declspec(dllexport)
+# elif __CYGWIN32__
+#  define DLL_EXPORT __declspec(dllexport)
 # else
 #  define DLL_EXPORT
 # endif

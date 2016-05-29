@@ -52,6 +52,7 @@ class Shell {
         void next_instruction(ArgsType const &args);
         void eval(ArgsType const &args);
         void current_opcode(ArgsType const &args);
+        void run_program(ArgsType const &args);
 
     private:
         CommandMapType  _commands;

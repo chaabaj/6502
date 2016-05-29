@@ -98,6 +98,8 @@ void    spi_cpu_execute(spi_cpu_t *cpu, spi_byte_t *mem) {
 
     if (cpu->opcode_table[opcode]) { ;
         cpu->opcode_table[opcode](cpu, mem);
+    } else {
+        cpu->pc++;
     }
 }
 

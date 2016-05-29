@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstdlib>
+#include <cstring>
 #include <array>
 #include "shell.hpp"
 #include "spi/program.h"
@@ -54,7 +54,7 @@ int main(int ac, char **av) {
     int                         err;
 
     if (ac > 1) {
-        bzero(memory, MEM_SIZE);
+        std::memset(memory, 0, MEM_SIZE);
         if ((err = spi_load_program(av[1], memory, &cfg, IGNORE_PRG_SIZE))) {
             spi_print_error(err);
             return EXIT_FAILURE;

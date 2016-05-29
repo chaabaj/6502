@@ -38,7 +38,7 @@ Shell::Shell(spi_cpu_t &cpu, spi_byte_t *mem) : _cpu(cpu), _mem(mem) {
     _commands["next"] = std::bind(&Shell::next_instruction, this, _1);
     _commands["eval"] = std::bind(&Shell::eval, this, _1);
     _commands["cur_op"] = std::bind(&Shell::current_opcode, this, _1);
-
+    _commands["run"] = std::bind(&Shell::run_program, this, _1);
 }
 
 void Shell::execute(std::string const &str) {
@@ -153,6 +153,12 @@ void Shell::eval(ArgsType const &args) {
     _cpu.pc = save_pc;
     for (int i = 0; i < 3 && i < args.size() - 1; ++i) {
         _mem[i] = save_mem[i];
+    }
+}
+
+void Shell::run_program(ArgsType const &args) {
+    while (true) {
+        spi_cpu_execute(&_cpu, _mem);
     }
 }
 

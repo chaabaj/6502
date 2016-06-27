@@ -23,8 +23,8 @@ Debugger usage:
 You can use this assembler to compile your own program : https://hkn.eecs.berkeley.edu/~mcmartin/P65/ophis-ref.html
 
 Roadmap :
-* Initialization and loading : Testing
-* Instruction implementation : Testing
-* Shared library : Todo
+* Initialization and loading : Done
+* Instruction implementation : Done
+* Shared library : Done
 * Clock synchronization : Todo
-* Debbuging tools like memory dump, cpu state, breakpoint, ... : Todo
+* Debbuging tools like memory dump, cpu state, breakpoint, ... : Done some basic debugger but consider using some other debbugging tools available

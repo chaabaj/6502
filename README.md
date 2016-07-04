@@ -26,5 +26,5 @@ Roadmap :
 * Initialization and loading : Done
 * Instruction implementation : Done
 * Shared library : Done
-* Clock synchronization : Todo
+* Clock synchronization : Not to be done here to make it easier to synchronize multiple device
 * Debbuging tools like memory dump, cpu state, breakpoint, ... : Done some basic debugger but consider using some other debbugging tools available
